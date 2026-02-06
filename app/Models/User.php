@@ -9,6 +9,16 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    /**
+     * Modelo `User`
+     *
+     * Observações importantes:
+     * - O campo `role` é usado por este projeto para controle básico de autorização
+     *   (valores esperados: `admin`, `professor`, `aluno`).
+     * - Mantemos helpers `isAdmin()`, `isProfessor()` e `isAluno()` para facilitar
+     *   verificações nos controllers/views/middlewares.
+     * - `password` é automaticamente cast/hashed via `casts()`.
+     */
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
@@ -21,7 +31,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role', // importante: incluir role aqui para permitir atribuição em massa
+        'role', // importante: incluir role aqui para permitir atribuição em massa (ex.: seeders)
     ];
 
     /**

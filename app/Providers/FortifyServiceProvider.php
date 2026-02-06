@@ -12,6 +12,18 @@ use Illuminate\Cache\RateLimiting\Limit;
 
 class FortifyServiceProvider extends ServiceProvider
 {
+    /**
+     * FortifyServiceProvider
+     *
+     * Este provider faz duas coisas principais para o projeto LMS:
+     * 1) Sobrepõe a resposta de login (`LoginResponse`) para usar nossa
+     *    implementação customizada (`App\Http\Responses\LoginResponse`).
+     * 2) Registra as views que o Laravel Fortify exige para resolver os
+     *    contratos do tipo `*ViewResponse` (por exemplo `LoginViewResponse`).
+     *
+     * Também definimos limitadores de taxa (`RateLimiter::for`) usados
+     * pelo Fortify para proteger endpoints de autenticação.
+     */
     public function register(): void
     {
     }
@@ -47,12 +59,15 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         // Define Fortify rate limiters used by the auth controllers
+        // Limiter para tentativas de login: por e-mail + IP (evita ataques por força bruta)
         RateLimiter::for('login', function (Request $request) {
             $email = (string) $request->email;
 
+            // Limit: 5 tentativas por minuto por combinação email+ip
             return Limit::perMinute(5)->by($email.$request->ip());
         });
 
+        // Limiter para etapa de two-factor (quando aplicável). Usa o id de login armazenado na sessão.
         RateLimiter::for('two-factor', function (Request $request) {
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
         });

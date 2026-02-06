@@ -2,6 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 
+/**
+ * Web Routes
+ *
+ * Aqui definimos as rotas públicas e as rotas protegidas por autenticação.
+ * Comentários abaixo descrevem os grupos principais (perfil, admin, professor, aluno).
+ */
+
 // Public welcome
 Route::get('/', function () {
 	return view('welcome');
@@ -10,22 +17,23 @@ Route::get('/', function () {
 // Protected routes - require authentication
 Route::middleware(['auth'])->group(function () {
 	// Profile routes (edit, update, destroy)
+	// O `navigation` do layout usa as rotas nomeadas abaixo (`profile.edit`, ...)
 	Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
 	Route::patch('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 	Route::delete('/profile', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
 
-	// Generic dashboard
+	// Generic dashboard — rota de fallback quando role não estiver definida
 	Route::get('/dashboard', function () {
 		return view('dashboard');
 	})->name('dashboard');
 
-	// Admin area
+	// Admin area: todas rotas aqui usam middleware 'role:admin'
 	Route::prefix('admin')->middleware('role:admin')->group(function () {
 		Route::get('/', function () {
 			return view('admin.dashboard');
 		})->name('admin.dashboard');
 
-		// Admin sub-pages
+		// Sub-páginas administrativas referenciadas pela view admin/dashboard.blade.php
 		Route::get('usuarios', function () {
 			return view('admin.usuarios');
 		})->name('admin.usuarios');

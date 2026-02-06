@@ -1,3 +1,10 @@
+{{--
+    Welcome view
+
+    Esta página é a landing pública do sistema. Contém links rápidos para
+    documentação e botões de acesso quando o usuário não está autenticado.
+    Alterações visuais podem ser feitas em `resources/css/app.css` e `resources/js/app.js`.
+-->
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>

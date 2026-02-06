@@ -34,11 +34,13 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        {{-- Link para edição de perfil (rota: profile.edit) - usada pelo layout global --}}
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
+                        {{-- Form de logout: usamos um form POST para seguir as recomendações de segurança CSRF --}}
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
 

@@ -1,4 +1,11 @@
 <x-app-layout>
+    {{--
+        Dashboard genérico
+
+        Esta view é usada como fallback quando o usuário autenticado não
+        possui um `role` específico ou para testes rápidos. O redirecionamento
+        pós-login normalmente aponta para dashboards por role (admin/professor/aluno).
+    --}}
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Dashboard') }}
