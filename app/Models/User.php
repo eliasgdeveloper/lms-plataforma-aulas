@@ -2,62 +2,67 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * Modelo User
+ *
+ * Este model representa a tabela `users` no banco de dados.
+ * Ele é usado para autenticação, autorização e relacionamento
+ * com outras entidades do sistema.
+ *
+ * Observações:
+ * - O campo `role` define o perfil do usuário (admin, professor, aluno).
+ * - Métodos auxiliares (`isAdmin()`, `isProfessor()`, `isAluno()`) facilitam
+ *   verificações em controllers, views e middlewares.
+ * - O campo `password` é automaticamente criptografado via `casts()`.
+ */
 class User extends Authenticatable
 {
-    /**
-     * Modelo `User`
-     *
-     * Observações importantes:
-     * - O campo `role` é usado por este projeto para controle básico de autorização
-     *   (valores esperados: `admin`, `professor`, `aluno`).
-     * - Mantemos helpers `isAdmin()`, `isProfessor()` e `isAluno()` para facilitar
-     *   verificações nos controllers/views/middlewares.
-     * - `password` é automaticamente cast/hashed via `casts()`.
-     */
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     * Campos que podem ser atribuídos em massa (mass assignment).
      *
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role', // importante: incluir role aqui para permitir atribuição em massa (ex.: seeders)
+        'name',       // Nome do usuário
+        'email',      // Email único
+        'password',   // Senha criptografada
+        'role',       // Papel do usuário (admin, professor, aluno)
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Campos ocultos quando o model é serializado (ex.: JSON).
      *
      * @var list<string>
      */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password',        // Nunca expor a senha
+        'remember_token',  // Token de sessão persistente
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * Casts automáticos de atributos.
      *
      * @return array<string, string>
      */
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'email_verified_at' => 'datetime', // Converte para objeto DateTime
+            'password' => 'hashed',            // Garante que a senha seja sempre criptografada
         ];
     }
 
-    // Métodos auxiliares para perfis
+    /**
+     * Métodos auxiliares para verificar o papel do usuário.
+     * Facilitam a lógica de autorização em controllers/views.
+     */
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
