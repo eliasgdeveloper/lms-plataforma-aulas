@@ -10,6 +10,10 @@
 - Upload recebeu area elegante com badge por tipo de arquivo e feedback visual do arquivo selecionado.
 - Painel de edicao de conteudo exibe preview do video quando arquivo ou URL estao disponiveis.
 - Mensagens de sucesso e erros de validacao aparecem no topo do painel.
+- Preview de PDF e arquivos com opcoes de abrir/baixar no admin.
+- Area do aluno agora mostra abrir/baixar para PDF, Word, Excel e arquivos gerais.
+- Download removido dos videos e menu de contexto do video bloqueado.
+- SQLite ajustado para aceitar novos tipos em `conteudos.tipo` (excel, word, arquivo, quiz, prova, tarefa).
 
 ## Observacoes
 - Upload continua usando storage publico em `storage/app/public`.

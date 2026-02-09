@@ -1,8 +1,65 @@
-﻿# Changelog - Sistema LMS
+# Changelog - Sistema LMS
 
 Todas as mudanças notáveis no projeto serão documentadas neste arquivo.
 
 ---
+
+## [2.1.1] - 2026-02-08
+
+### Cursos (Index + Create)
+- Adicionado: paginas de cursos para aluno, professor e admin com cards verticais
+- Adicionado: pagina de criacao de curso para admin e professor
+- Adicionado: componente reutilizavel `course-card` para heranca e consistencia
+- Adicionado: CSS compartilhado de cursos + CSS especifico do formulario
+- Adicionado: rotas `admin.cursos.create` e `professor.cursos.create`
+- Melhorado: SEO on-page (meta tags, canonical, og tags)
+
+### Controller
+- Adicionado: `CursoController` com handlers de index e create por role
+- Adicionado: carregamento de categorias e alunos para matricula inicial
+
+### Documentacao
+- Adicionado: relatorios em docs/reports para cursos index e create
+- Atualizado: estrutura do projeto e roadmap com progresso de cursos
+
+## [2.1.2] - 2026-02-08
+
+### Cursos (Settings)
+- Adicionado: pagina de configuracoes do curso (admin/professor)
+- Adicionado: layout com menu superior e sidebar de conteudos
+- Adicionado: JSON-LD de curso nas paginas de configuracao
+
+### Acessos
+- Adicionado: cards do admin/professor abrem configuracoes quando ha ID
+- Adicionado: rotas `admin.cursos.show` e `professor.cursos.show`
+
+### Documentacao
+- Adicionado: relatorio da pagina de configuracoes
+- Adicionado: guia de papeis e permissoes
+
+## [2.1.3] - 2026-02-08
+
+### Cursos (Acoes no Settings)
+- Ajustado: cards ficaram visuais, com clique abrindo configuracoes do curso
+- Adicionado: acoes do curso (editar, ocultar, iniciar, agendar, excluir) na pagina de configuracoes
+- Adicionado: status e agendamento no banco de dados
+
+## [2.1.4] - 2026-02-08
+
+### Cursos (Interacoes)
+- Adicionado: menu superior e sidebar com anchors clicaveis nas configuracoes
+- Adicionado: paginas de relatorio rapido e visao geral para admin
+- Adicionado: mensagens visuais de sucesso/erro na pagina de configuracoes
+
+## [2.1.5] - 2026-02-08
+
+### Conteudos (Uploads e Preview)
+- Adicionado: preview de PDF e arquivos com links de abrir/baixar no admin
+- Adicionado: abrir/baixar de PDF, Word, Excel e arquivos gerais na area do aluno
+- Ajustado: video sem opcao de baixar e bloqueio do menu de contexto
+
+### Banco de Dados
+- Ajustado: SQLite passa a aceitar tipos extras em `conteudos.tipo`
 
 ## [2.0.0] - 2026-02-07
 
