@@ -901,22 +901,95 @@
                                     <div class="course-editor__badge">{{ strtoupper($itemType) }}</div>
                                 </div>
 
-                                @if ($itemType === 'video')
+                                @if (in_array($itemType, ['video', 'pdf', 'word', 'excel', 'arquivo', 'link', 'texto'], true))
                                     <div class="course-item-preview">
-                                        @if ($arquivoUrl)
-                                            <video controls preload="metadata" src="{{ $arquivoUrl }}"></video>
-                                        @elseif (!empty($item['url']))
-                                            <div class="course-item-preview__embed">
-                                                <iframe
-                                                    src="{{ $item['url'] }}"
-                                                    title="Preview do video"
-                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                    allowfullscreen
-                                                ></iframe>
-                                            </div>
-                                        @else
-                                            <div class="course-item-preview__empty">Envie um video para visualizar aqui.</div>
-                                        @endif
+                                        @switch($itemType)
+                                            @case('video')
+                                                @if ($arquivoUrl)
+                                                    <video controls preload="metadata" controlsList="nodownload noplaybackrate" disablePictureInPicture oncontextmenu="return false" src="{{ $arquivoUrl }}"></video>
+                                                @elseif (!empty($item['url']))
+                                                    <div class="course-item-preview__embed">
+                                                        <iframe
+                                                            src="{{ $item['url'] }}"
+                                                            title="Preview do video"
+                                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                            allowfullscreen
+                                                        ></iframe>
+                                                    </div>
+                                                @else
+                                                    <div class="course-item-preview__empty">Envie um video para visualizar aqui.</div>
+                                                @endif
+                                                @break
+                                            @case('pdf')
+                                                @if ($arquivoUrl)
+                                                    <div class="course-item-preview__embed">
+                                                        <iframe src="{{ $arquivoUrl }}" title="Preview do PDF"></iframe>
+                                                    </div>
+                                                    <div class="course-item-preview__file">
+                                                        <span>PDF anexado:</span>
+                                                        <div class="course-item-preview__actions">
+                                                            <a href="{{ $arquivoUrl }}" target="_blank" rel="noopener noreferrer">Abrir PDF</a>
+                                                            <a href="{{ $arquivoUrl }}" download>Baixar PDF</a>
+                                                        </div>
+                                                    </div>
+                                                @elseif (!empty($item['url']))
+                                                    <div class="course-item-preview__embed">
+                                                        <iframe src="{{ $item['url'] }}" title="Preview do PDF"></iframe>
+                                                    </div>
+                                                    <div class="course-item-preview__file">
+                                                        <span>PDF externo:</span>
+                                                        <div class="course-item-preview__actions">
+                                                            <a href="{{ $item['url'] }}" target="_blank" rel="noopener noreferrer">Abrir PDF</a>
+                                                            <a href="{{ $item['url'] }}" download>Baixar PDF</a>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div class="course-item-preview__empty">Envie um PDF para visualizar aqui.</div>
+                                                @endif
+                                                @break
+                                            @case('word')
+                                            @case('excel')
+                                            @case('arquivo')
+                                                @if ($arquivoUrl)
+                                                    <div class="course-item-preview__file">
+                                                        <span>Arquivo anexado:</span>
+                                                        <div class="course-item-preview__actions">
+                                                            <a href="{{ $arquivoUrl }}" target="_blank" rel="noopener noreferrer">Abrir arquivo</a>
+                                                            <a href="{{ $arquivoUrl }}" download>Baixar arquivo</a>
+                                                        </div>
+                                                    </div>
+                                                @elseif (!empty($item['url']))
+                                                    <div class="course-item-preview__file">
+                                                        <span>Link do arquivo:</span>
+                                                        <div class="course-item-preview__actions">
+                                                            <a href="{{ $item['url'] }}" target="_blank" rel="noopener noreferrer">Abrir link</a>
+                                                            <a href="{{ $item['url'] }}" download>Baixar arquivo</a>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div class="course-item-preview__empty">Envie um arquivo para visualizar aqui.</div>
+                                                @endif
+                                                @break
+                                            @case('link')
+                                                @if (!empty($item['url']))
+                                                    <div class="course-item-preview__file">
+                                                        <span>Link externo:</span>
+                                                        <a href="{{ $item['url'] }}" target="_blank" rel="noopener noreferrer">Abrir link</a>
+                                                    </div>
+                                                @else
+                                                    <div class="course-item-preview__empty">Adicione um link para visualizar aqui.</div>
+                                                @endif
+                                                @break
+                                            @case('texto')
+                                                @if (!empty($item['url']))
+                                                    <div class="course-item-preview__text">{!! nl2br(e($item['url'])) !!}</div>
+                                                @elseif (!empty($item['descricao']))
+                                                    <div class="course-item-preview__text">{!! nl2br(e($item['descricao'])) !!}</div>
+                                                @else
+                                                    <div class="course-item-preview__empty">Adicione um texto para visualizar aqui.</div>
+                                                @endif
+                                                @break
+                                        @endswitch
                                     </div>
                                 @endif
 
