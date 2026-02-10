@@ -1,4 +1,4 @@
-﻿# Arquitetura do Sistema LMS
+# Arquitetura do Sistema LMS
 
 **Versão:** 2.0  
 **Data:** 07/02/2026  

@@ -1,4 +1,4 @@
-﻿# Estrutura de Páginas - Padrão Tríade
+# Estrutura de Páginas - Padrão Tríade
 
 ## 📁 Organização
 

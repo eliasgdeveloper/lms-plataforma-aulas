@@ -1,4 +1,4 @@
-﻿# Implementação de Navegação SPA-Like (Sem Refresh)
+# Implementação de Navegação SPA-Like (Sem Refresh)
 
 **Data:** 07/02/2026  
 **Objetivo:** Eliminar refresh da tela (tela branca) ao navegar entre páginas

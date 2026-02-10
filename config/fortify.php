@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Laravel\Fortify\Features;
 

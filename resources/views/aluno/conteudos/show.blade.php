@@ -1,6 +1,6 @@
-@extends('layouts.student')
+@extends('layouts.aluno')
 
-@section('content')
+@section('aluno-content')
 <div class="max-w-4xl">
     <!-- Breadcrumb -->
     <div class="mb-8 flex items-center space-x-2 text-sm text-gray-600">
@@ -113,9 +113,16 @@
                                 <a href="{{ $pdfUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition font-semibold">
                                     Abrir PDF
                                 </a>
-                                <a href="{{ $pdfUrl }}" download class="inline-flex items-center bg-orange-100 text-orange-800 px-6 py-3 rounded-lg hover:bg-orange-200 transition font-semibold">
-                                    Baixar PDF
-                                </a>
+                                @php
+                                    $canDownload = auth()->check() && auth()->user()->role === 'professor'
+                                        ? (bool) $conteudo->allow_download_professor
+                                        : (bool) $conteudo->allow_download_student;
+                                @endphp
+                                @if($canDownload)
+                                    <a href="{{ $pdfUrl }}" download class="inline-flex items-center bg-orange-100 text-orange-800 px-6 py-3 rounded-lg hover:bg-orange-200 transition font-semibold">
+                                        Baixar PDF
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -181,9 +188,11 @@
                                 <a href="{{ $fileUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center bg-slate-700 text-white px-6 py-3 rounded-lg hover:bg-slate-800 transition font-semibold">
                                     Abrir arquivo
                                 </a>
-                                <a href="{{ $fileUrl }}" download class="inline-flex items-center bg-slate-100 text-slate-800 px-6 py-3 rounded-lg hover:bg-slate-200 transition font-semibold">
-                                    Baixar arquivo
-                                </a>
+                                @if($canDownload)
+                                    <a href="{{ $fileUrl }}" download class="inline-flex items-center bg-slate-100 text-slate-800 px-6 py-3 rounded-lg hover:bg-slate-200 transition font-semibold">
+                                        Baixar arquivo
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </div>

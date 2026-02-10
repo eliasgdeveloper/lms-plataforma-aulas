@@ -1,4 +1,4 @@
-﻿# 🚀 README8_IMPLEMENTACAO_ADMIN_FASE1
+# 🚀 README8_IMPLEMENTACAO_ADMIN_FASE1
 
 **Versão:** 2.1.0 (Fase 1 - Fundação)  
 **Data:** 07/02/2026  

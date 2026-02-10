@@ -1,10 +1,19 @@
-﻿# 🗺️ ROADMAP ADMIN SYSTEM - v2.1 até v3.0
+# 🗺️ ROADMAP ADMIN SYSTEM - v2.1 até v3.0
 
 **Status Atual:** v2.1.0 (Fase 1 ✅ Completa)  
 **Próximo:** v2.2.0 (Fase 2 - Views + Controllers)  
 **Futuro:** v3.0.0 (Sistema Admin Completo)
 
 ---
+
+## Atualizacao 2026-02-08
+
+- ✅ Views cursos (admin, professor, aluno) com cards e SEO on-page
+- ✅ CursoController com index e create (admin/professor)
+- ✅ Componente reutilizavel de card de curso
+- ✅ CSS compartilhado + CSS do formulario de criacao
+- ✅ Pagina de configuracoes do curso (admin/professor)
+- 🔜 CRUD completo de cursos (store, update, publish)
 
 ## 📊 Timeline Visual
 

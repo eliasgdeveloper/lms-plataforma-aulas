@@ -1,4 +1,4 @@
-﻿# 🔍 Diagnóstico e Correção: Sistema de Rotas e Parâmetros
+# 🔍 Diagnóstico e Correção: Sistema de Rotas e Parâmetros
 
 **Data:** 7 de Fevereiro de 2026  
 **Status:** ✅ RESOLVIDO

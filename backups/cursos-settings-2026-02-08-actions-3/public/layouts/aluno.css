@@ -1,0 +1,213 @@
+/* Aluno Layout Styles */
+
+:root {
+    --primary: #2563eb;
+    --secondary: #1e40af;
+    --text-dark: #1b1b18;
+    --text-light: #706f6c;
+    --bg-light: #fdfdfc;
+    --bg-white: #ffffff;
+    --border: #e3e3e0;
+    --sidebar-bg: #003d82;
+    --sidebar-text: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-dark: #ededec;
+        --text-light: #a1a09a;
+        --bg-light: #0a0a0a;
+        --bg-white: #161615;
+        --border: #3e3e3a;
+        --sidebar-bg: #0a1628;
+    }
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { background-color: var(--bg-light); color: var(--text-dark); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Figtree', sans-serif; }
+
+.aluno-wrapper {
+    display: flex;
+    height: 100vh;
+}
+
+.aluno-sidebar {
+    width: 250px;
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 1rem;
+}
+
+.sidebar-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.sidebar-header p {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+.sidebar-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    color: var(--sidebar-text);
+    text-decoration: none;
+    transition: all 0.2s;
+    opacity: 0.8;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    opacity: 1;
+}
+
+.nav-link.active {
+    background-color: var(--primary);
+    opacity: 1;
+    font-weight: 600;
+}
+
+.nav-link .icon {
+    font-size: 1.25rem;
+}
+
+.sidebar-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 1rem;
+    margin-top: auto;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 6px;
+    color: var(--sidebar-text);
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+    transition: background-color 0.2s;
+}
+
+.user-profile:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.user-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-email {
+    font-size: 0.7rem;
+    opacity: 0.7;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.logout-form {
+    width: 100%;
+}
+
+.logout-btn {
+    width: 100%;
+    padding: 0.65rem 1rem;
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--sidebar-text);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.logout-btn:hover {
+    background-color: rgba(255, 69, 69, 0.2);
+    border-color: #ff4545;
+}
+
+.aluno-main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem;
+    background-color: var(--bg-light);
+}
+
+@media (max-width: 768px) {
+    .aluno-sidebar {
+        width: 200px;
+        padding: 1rem;
+    }
+    
+    .aluno-main {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .aluno-wrapper {
+        flex-direction: column-reverse;
+    }
+    
+    .aluno-sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        padding: 1rem;
+        overflow-x: auto;
+    }
+    
+    .sidebar-nav {
+        flex-direction: row;
+        flex: 1;
+    }
+    
+    .aluno-main {
+        padding: 1.5rem 1rem;
+    }
+}

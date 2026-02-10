@@ -1,4 +1,4 @@
-﻿# Documentação do Projeto — LMS (Resumo das alterações e guia rápido)
+# Documentação do Projeto — LMS (Resumo das alterações e guia rápido)
 
 Data: 2026-02-06
 Autor das alterações: Elias Gomes

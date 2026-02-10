@@ -1,4 +1,4 @@
-﻿# 👑 Admin Avançado - Documentação de Implementação
+# 👑 Admin Avançado - Documentação de Implementação
 
 **Versão:** 2.1.0  
 **Data:** 07/02/2026  

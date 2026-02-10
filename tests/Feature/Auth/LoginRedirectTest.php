@@ -38,6 +38,6 @@ class LoginRedirectTest extends TestCase
 
         // Opcional: siga manualmente e verifique o conteúdo final
         $final = $this->get(route('aluno.dashboard'));
-        $final->assertSee('Área do Aluno');
+        $final->assertSee('Bem-vindo, Aluno');
     }
 }

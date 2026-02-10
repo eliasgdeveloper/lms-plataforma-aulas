@@ -21,13 +21,22 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
+        $role = $user->role ?? $user->refresh()->role;
+
+        $expectedTarget = match ($role) {
+            'admin' => route('admin.dashboard'),
+            'professor' => route('professor.dashboard'),
+            'aluno' => route('aluno.dashboard'),
+            default => route('dashboard', absolute: false),
+        };
+
         $response = $this->post('/login', [
             'email' => $user->email,
             'password' => 'password',
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect($expectedTarget);
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void

@@ -1,0 +1,336 @@
+:root {
+    --course-bg: #f5f7fb;
+    --course-card: #ffffff;
+    --course-text: #0f172a;
+    --course-muted: #64748b;
+    --course-border: #e2e8f0;
+    --course-primary: #0f766e;
+    --course-primary-dark: #0b5f58;
+    --course-accent: #0f172a;
+}
+
+.aluno-course-body {
+    margin: 0;
+    font-family: "Poppins", "Segoe UI", sans-serif;
+    background: var(--course-bg);
+    color: var(--course-text);
+}
+
+.aluno-course-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    background: var(--course-card);
+    border-bottom: 1px solid var(--course-border);
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.topbar-logo {
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--course-accent);
+    text-decoration: none;
+}
+
+.topbar-nav {
+    display: flex;
+    gap: 16px;
+}
+
+.topbar-nav a {
+    color: var(--course-muted);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.topbar-nav a:hover {
+    color: var(--course-accent);
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.topbar-user {
+    font-weight: 600;
+    color: var(--course-accent);
+}
+
+.topbar-link {
+    color: var(--course-muted);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.topbar-logout {
+    background: #ef4444;
+    border: none;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.aluno-course-main {
+    padding: 24px;
+}
+
+.course-shell {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+    align-items: stretch;
+}
+
+.course-sidebar {
+    background: var(--course-card);
+    border-radius: 16px;
+    border: 1px solid var(--course-border);
+    padding: 20px;
+    height: calc(100vh - 140px);
+    overflow-y: auto;
+}
+
+.course-sidebar__header h1 {
+    margin: 0 0 6px;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--course-muted);
+}
+
+.course-sidebar__header p {
+    margin: 0 0 16px;
+    font-weight: 600;
+    color: var(--course-accent);
+}
+
+.course-progress {
+    background: #f1f5f9;
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.course-progress__bar {
+    background: #e2e8f0;
+    border-radius: 999px;
+    height: 8px;
+    overflow: hidden;
+}
+
+.course-progress__bar span {
+    display: block;
+    height: 100%;
+    background: var(--course-primary);
+}
+
+.course-progress__meta {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--course-muted);
+}
+
+.course-modules {
+    margin-top: 20px;
+    display: grid;
+    gap: 12px;
+}
+
+.module {
+    border: 1px solid var(--course-border);
+    border-radius: 12px;
+    background: #fff;
+}
+
+.module__header {
+    width: 100%;
+    padding: 12px 14px;
+    border: none;
+    background: transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.module__progress {
+    font-size: 12px;
+    color: var(--course-muted);
+}
+
+.module__items {
+    list-style: none;
+    margin: 0;
+    padding: 0 10px 10px;
+}
+
+.item {
+    width: 100%;
+    border: none;
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: grid;
+    grid-template-columns: 20px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    cursor: pointer;
+}
+
+.item__icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--course-muted);
+}
+
+.item__label {
+    font-size: 13px;
+    text-align: left;
+}
+
+.item__status {
+    font-size: 12px;
+    color: var(--course-muted);
+}
+
+.course-content {
+    background: var(--course-card);
+    border-radius: 16px;
+    border: 1px solid var(--course-border);
+    padding: 12px 18px 20px;
+    min-height: calc(100vh - 110px);
+    height: calc(100vh - 110px);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 6px;
+}
+
+.content-header h2 {
+    margin: 0 0 6px;
+    font-size: 22px;
+}
+
+.content-header p {
+    margin: 0;
+    color: var(--course-muted);
+}
+
+.content-metrics {
+    display: grid;
+    gap: 8px;
+}
+
+.metric {
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 8px 12px;
+    text-align: right;
+}
+
+.metric__label {
+    font-size: 11px;
+    color: var(--course-muted);
+    display: block;
+}
+
+.metric__value {
+    font-weight: 700;
+}
+
+.content-preview {
+    background: #0f172a;
+    border-radius: 16px;
+    padding: 10px;
+    min-height: 520px;
+    height: auto;
+    flex: 1;
+    aspect-ratio: auto;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.content-preview iframe,
+.content-preview video {
+    width: 100%;
+    height: 100%;
+    min-height: 520px;
+    border: none;
+    border-radius: 12px;
+}
+
+.content-placeholder {
+    text-align: center;
+    font-weight: 600;
+    max-width: 520px;
+}
+
+.content-actions {
+    margin-top: 18px;
+    display: flex;
+    gap: 12px;
+}
+
+.content-actions .btn {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--course-border);
+    background: #fff;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.content-actions .btn-primary {
+    background: var(--course-primary);
+    color: #fff;
+    border: none;
+}
+
+@media (max-width: 1024px) {
+    .course-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .course-sidebar,
+    .course-content {
+        height: auto;
+    }
+
+    .content-preview {
+        min-height: 420px;
+        height: clamp(420px, 58vh, 620px);
+        aspect-ratio: auto;
+    }
+
+    .content-preview iframe,
+    .content-preview video {
+        min-height: 420px;
+    }
+}

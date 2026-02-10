@@ -1,6 +1,6 @@
-﻿@extends('layouts.page')
+@extends('layouts.admin')
 
-@section('content')
+@section('admin-content')
 <div class="container mx-auto px-4 py-6">
     
     <!-- ===== HEADER ===== -->
@@ -20,32 +20,27 @@
         </a>
     </div>
 
-    <!-- ===== FILTROS (HTMX) ===== -->
+    <!-- ===== FILTROS ===== -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-6" x-data="filterForm()">
-        <form hx-get="{{ route('admin.usuarios.index') }}" 
-              hx-target="#usuarios-table" 
-              hx-indicator="#loading"
-              class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <form action="{{ route('admin.usuarios.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4">
             
             <!-- Busca por Nome/Email -->
             <div>
                 <label for="search" class="block text-sm font-medium text-gray-700 mb-2">🔍 Buscar</label>
-                <input type="text" 
+                  <input type="text"
                        id="search" 
                        name="search" 
                        value="{{ request('search') }}" 
                        placeholder="Nome ou email..."
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                       hx-trigger="keyup changed delay:500ms">
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
 
             <!-- Filtro por Papel (Role) -->
             <div>
                 <label for="role" class="block text-sm font-medium text-gray-700 mb-2">📋 Papel</label>
                 <select id="role" 
-                        name="role" 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        hx-trigger="change">
+                    name="role" 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Todos os papéis</option>
                     <option value="aluno" @selected(request('role') === 'aluno')>👤 Aluno</option>
                     <option value="professor" @selected(request('role') === 'professor')>👨‍🏫 Professor</option>
@@ -57,9 +52,8 @@
             <div>
                 <label for="status" class="block text-sm font-medium text-gray-700 mb-2">⚡ Status</label>
                 <select id="status" 
-                        name="status" 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        hx-trigger="change">
+                    name="status" 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Todos os status</option>
                     <option value="active" @selected(request('status') === 'active')>🟢 Ativo</option>
                     <option value="inactive" @selected(request('status') === 'inactive')>🔴 Inativo</option>
@@ -68,29 +62,31 @@
 
             <!-- Sortagem -->
             <div>
-                <label for="sort" class="block text-sm font-medium text-gray-700 mb-2">🔀 Ordenar por</label>
+                <label for="sort" class="block text-sm font-medium text-gray-700 mb-2">🔀 Ordenar</label>
                 <select id="sort" 
-                        name="sort" 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        hx-trigger="change">
+                    name="sort" 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="created_at" @selected(request('sort') === 'created_at')>Mais Recentes</option>
                     <option value="name" @selected(request('sort') === 'name')>Nome (A-Z)</option>
                     <option value="email" @selected(request('sort') === 'email')>Email (A-Z)</option>
                 </select>
             </div>
+
+            <!-- Botão Buscar -->
+            <div class="flex items-end">
+                <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200 inline-flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    Buscar
+                </button>
+            </div>
         </form>
 
-        <!-- Loading Indicator -->
-        <div id="loading" class="htmx-request:flex hidden items-center gap-2 text-blue-600 mt-4">
-            <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <span>Carregando...</span>
-        </div>
     </div>
 
-    <!-- ===== TABELA DE USUÁRIOS (HTMX Target) ===== -->
+    <!-- ===== TABELA DE USUÁRIOS ===== -->
     <div id="usuarios-table" class="bg-white rounded-lg shadow-md overflow-hidden">
         
         <!-- Desktop: Table View -->
@@ -317,8 +313,6 @@
 </div>
 
 <!-- ===== Carregar CSS e JS ===== -->
-@vite([
-    'resources/views/pages/admin_usuarios/style.css',
-    'resources/views/pages/admin_usuarios/script.js'
-])
+<link rel="stylesheet" href="{{ asset('pages/admin_usuarios/style.css') }}">
+<script src="{{ asset('pages/admin_usuarios/script.js') }}" defer></script>
 @endsection

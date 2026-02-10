@@ -1,4 +1,4 @@
-﻿🔎 Documentação atual (resumo até aqui) - 06-02-26  -  20:44
+🔎 Documentação atual (resumo até aqui) - 06-02-26  -  20:44
 Estrutura de Navegação
 Aluno
 

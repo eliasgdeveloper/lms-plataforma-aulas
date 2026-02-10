@@ -1,4 +1,4 @@
-﻿# 🎉 FASE 1 ADMIN - IMPLEMENTAÇÃO COMPLETADA
+# 🎉 FASE 1 ADMIN - IMPLEMENTAÇÃO COMPLETADA
 
 **Data de Conclusão:** 07/02/2026  
 **Versão do Projeto:** 2.1.0  

@@ -774,6 +774,20 @@
     color: var(--courses-muted);
 }
 
+.course-field--checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--courses-dark);
+}
+
+.course-field--checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--courses-primary);
+}
+
 .course-field input {
     border: 1px solid var(--courses-border);
     border-radius: 10px;

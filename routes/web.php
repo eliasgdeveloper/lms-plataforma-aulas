@@ -2,50 +2,38 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConteudoController;
+use App\Http\Controllers\CursoController;
+use App\Models\User;
 
 /**
  * Web Routes
  *
- * Aqui definimos as rotas públicas e as rotas protegidas por autenticação.
- * Comentários abaixo descrevem os grupos principais (perfil, admin, professor, aluno).
+ * Aqui definimos as rotas públicas e os grupos de rotas protegidas.
+ * 
+ * Grupos:
+ * - Public: rotas sem autenticação
+ * - Authenticated: rotas que exigem login
+ * - Admin: rotas administrativas (middleware role:admin)
  */
 
-// Public welcome
+// ===== PUBLIC ROUTES =====
 Route::get('/', function () {
     return view('pages.welcome.index');
 });
 
-// Protected routes - require authentication
+require __DIR__ . '/auth.php';
+
+// ===== AUTHENTICATED ROUTES =====
 Route::middleware(['auth'])->group(function () {
-    // Profile routes (edit, update, destroy)
-    // O `navigation` do layout usa as rotas nomeadas abaixo (`profile.edit`, ...)
+    // Profile
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Generic dashboard — rota de fallback quando role não estiver definida
+    // Dashboard genérico
     Route::get('/dashboard', function () {
         return view('pages.dashboard.index');
     })->name('dashboard');
-
-    // Admin area: todas rotas aqui usam middleware 'role:admin'
-    Route::prefix('admin')->middleware('role:admin')->group(function () {
-        Route::get('/', function () {
-            return view('pages.admin_dashboard.index');
-        })->name('admin.dashboard');
-
-        Route::get('usuarios', function () {
-            return view('pages.admin_usuarios.index');
-        })->name('admin.usuarios');
-
-        Route::get('cursos', function () {
-            return view('pages.admin_cursos.index');
-        })->name('admin.cursos');
-
-        Route::get('configuracoes', function () {
-            return view('pages.admin_configuracoes.index');
-        })->name('admin.configuracoes');
-    });
 
     // Professor area
     Route::prefix('professor')->middleware('role:professor')->group(function () {
@@ -56,6 +44,54 @@ Route::middleware(['auth'])->group(function () {
         Route::get('aulas', function () {
             return view('pages.professor_aulas.index');
         })->name('professor.aulas');
+
+        Route::get('cursos', [CursoController::class, 'professorIndex'])
+            ->name('professor.cursos');
+
+        Route::get('cursos/novo', [CursoController::class, 'professorCreate'])
+            ->name('professor.cursos.create');
+
+        Route::post('cursos/novo', [CursoController::class, 'professorStore'])
+            ->name('professor.cursos.store');
+
+        Route::get('cursos/{curso}', [CursoController::class, 'professorShow'])
+            ->name('professor.cursos.show');
+
+        Route::get('cursos/{curso}/editar', [CursoController::class, 'professorEdit'])
+            ->name('professor.cursos.edit');
+
+        Route::put('cursos/{curso}', [CursoController::class, 'professorUpdate'])
+            ->name('professor.cursos.update');
+
+        Route::post('cursos/{curso}/acoes/{acao}', [CursoController::class, 'professorAction'])
+            ->name('professor.cursos.action');
+
+        Route::post('cursos/{curso}/conteudos', [CursoController::class, 'professorStoreConteudo'])
+            ->name('professor.cursos.conteudos.store');
+
+        Route::post('cursos/{curso}/aulas', [CursoController::class, 'professorStoreAula'])
+            ->name('professor.cursos.aulas.store');
+
+        Route::put('cursos/{curso}/aulas/{aula}', [CursoController::class, 'professorUpdateAula'])
+            ->name('professor.cursos.aulas.update');
+
+        Route::patch('cursos/{curso}/aulas/{aula}/toggle', [CursoController::class, 'professorToggleAula'])
+            ->name('professor.cursos.aulas.toggle');
+
+        Route::delete('cursos/{curso}/aulas/{aula}', [CursoController::class, 'professorDestroyAula'])
+            ->name('professor.cursos.aulas.destroy');
+
+        Route::put('cursos/{curso}/conteudos/{conteudo}', [CursoController::class, 'professorUpdateConteudo'])
+            ->name('professor.cursos.conteudos.update');
+
+        Route::patch('cursos/{curso}/conteudos/{conteudo}/toggle', [CursoController::class, 'professorToggleConteudo'])
+            ->name('professor.cursos.conteudos.toggle');
+
+        Route::delete('cursos/{curso}/conteudos/{conteudo}', [CursoController::class, 'professorDestroyConteudo'])
+            ->name('professor.cursos.conteudos.destroy');
+
+        Route::get('cursos/{curso}/preview', [CursoController::class, 'professorPreview'])
+            ->name('professor.cursos.preview');
 
         Route::get('materiais', function () {
             return view('pages.professor_materiais.index');
@@ -76,6 +112,12 @@ Route::middleware(['auth'])->group(function () {
             return view('pages.aluno_aulas.index');
         })->name('aluno.aulas');
 
+        Route::get('cursos', [CursoController::class, 'alunoIndex'])
+            ->name('aluno.cursos');
+
+        Route::get('cursos/{curso}', [CursoController::class, 'alunoShow'])
+            ->name('aluno.cursos.show');
+
         Route::get('materiais', function () {
             return view('pages.aluno_materiais.index');
         })->name('aluno.materiais');
@@ -90,6 +132,12 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/conteudos/{conteudo}', [ConteudoController::class, 'show'])
             ->name('conteudos.show');
+
+        Route::post('/conteudos/{conteudo}/progress', [ConteudoController::class, 'updateProgress'])
+            ->name('conteudos.progress');
     });
 });
+
+// ===== ADMIN ROUTES =====
+require __DIR__ . '/admin.php';
 

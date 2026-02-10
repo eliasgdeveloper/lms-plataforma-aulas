@@ -1,0 +1,97 @@
+:root {
+    --primary: #1a1a3e;
+    --secondary: #6366f1;
+    --text-dark: #1b1b18;
+    --text-light: #6b7280;
+    --bg-light: #f3f4f6;
+    --bg-white: #ffffff;
+    --border: #e5e7eb;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-dark: #f5f5f1;
+        --text-light: #d1d5db;
+        --bg-light: #1f2937;
+        --bg-white: #111827;
+        --border: #374151;
+    }
+}
+
+.dashboard-hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white;
+    padding: 3rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.dashboard-hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-hero p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.dashboard-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.nav-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.nav-card:hover {
+    border-color: var(--secondary);
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.1);
+}
+
+.nav-card a {
+    display: block;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: var(--text-dark);
+}
+
+.nav-card .icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.nav-card h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+}
+
+.nav-card p {
+    font-size: 0.95rem;
+    color: var(--text-light);
+}
+
+@media (max-width: 768px) {
+    .dashboard-hero {
+        padding: 2rem;
+    }
+
+    .dashboard-hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .dashboard-nav {
+        grid-template-columns: 1fr;
+    }
+}

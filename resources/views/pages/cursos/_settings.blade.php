@@ -642,8 +642,176 @@
 
             <div class="course-panel" data-panel="participantes" hidden>
                 <div class="course-settings__card">
-                    <h2>Participantes</h2>
-                    <p>Gerencie alunos, convites pendentes e grupos vinculados.</p>
+                    @php
+                        $participantsList = $participants ?? [];
+                        $participantsTotal = count($participantsList);
+                        $turmasList = $turmas ?? collect();
+                        $turmasTotal = method_exists($turmasList, 'count') ? $turmasList->count() : count($turmasList);
+                    @endphp
+
+                    <div
+                        class="course-editor__header"
+                        data-participants-root
+                        data-search-route="{{ $participantsSearchRoute }}"
+                        data-enroll-route="{{ $participantsEnrollRoute }}"
+                    >
+                        <div>
+                            <p class="course-editor__eyebrow">Participantes</p>
+                            <h2>Participantes</h2>
+                            <p>Gerencie alunos, convites pendentes e grupos vinculados.</p>
+                        </div>
+                        @if ($participantsEnrollRoute)
+                            <button class="btn btn-secondary" type="button" data-participants-open>Inscrever alunos</button>
+                        @endif
+                    </div>
+
+                    <div class="course-content-grid">
+                        <div class="course-content-block">
+                            <h3>Total inscritos</h3>
+                            <p>
+                                <strong data-participants-count data-count="{{ $participantsTotal }}">{{ $participantsTotal }}</strong>
+                                alunos ativos no curso.
+                            </p>
+                        </div>
+                        <div class="course-content-block">
+                            <h3>Turmas vinculadas</h3>
+                            <p>{{ $turmasTotal }} grupos cadastrados para este curso.</p>
+                        </div>
+                    </div>
+
+                    @if ($participantsTotal === 0)
+                        <div class="course-empty-menu" data-participants-empty>
+                            <p class="course-empty-menu__hint">Nenhum aluno inscrito ainda.</p>
+                            @if ($participantsEnrollRoute)
+                                <button class="btn btn-secondary" type="button" data-participants-open>
+                                    Inscrever primeiro aluno
+                                </button>
+                            @endif
+                        </div>
+                    @endif
+
+                    <div class="course-table-wrapper{{ $participantsTotal === 0 ? ' hidden' : '' }}" data-participants-table>
+                        <table class="course-table">
+                            <thead>
+                                <tr>
+                                    <th>Aluno</th>
+                                    <th>Turma</th>
+                                    <th>Status</th>
+                                    <th>Matricula</th>
+                                </tr>
+                            </thead>
+                            <tbody data-participants-list>
+                                @foreach ($participantsList as $participant)
+                                    <tr data-participant-id="{{ $participant['student']['id'] ?? '' }}">
+                                        <td>
+                                            <strong>{{ $participant['student']['name'] ?? 'Aluno' }}</strong><br>
+                                            <small>{{ $participant['student']['email'] ?? 'Sem email' }}</small>
+                                        </td>
+                                        <td>{{ $participant['turma'] ?? 'Sem turma' }}</td>
+                                        <td>{{ ucfirst($participant['status'] ?? 'ativo') }}</td>
+                                        <td>{{ $participant['data_matricula'] ?? '-' }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                @if ($participantsEnrollRoute && $participantsSearchRoute)
+                    <div
+                        class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4"
+                        data-participants-modal
+                        aria-hidden="true"
+                    >
+                        <div class="w-full max-w-4xl max-h-[90vh] overflow-auto rounded-2xl bg-white shadow-xl">
+                            <div class="flex items-center justify-between border-b px-6 py-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold">Inscrever alunos</h3>
+                                    <p class="text-sm text-slate-500">Busque alunos existentes ou cadastre um novo.</p>
+                                </div>
+                                <button class="btn btn-ghost" type="button" data-participants-close>Fechar</button>
+                            </div>
+
+                            <div class="px-6 pt-4" data-participants-feedback hidden></div>
+
+                            <div class="space-y-8 px-6 py-6">
+                                <section>
+                                    <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">Buscar aluno</h4>
+                                    <div class="course-editor__row">
+                                        <label class="course-field">
+                                            <span>Nome ou email</span>
+                                            <input
+                                                type="search"
+                                                placeholder="Digite o nome ou email do aluno"
+                                                data-participants-search-input
+                                            >
+                                        </label>
+                                        <label class="course-field">
+                                            <span>Turma (opcional)</span>
+                                            <select data-participants-turma-select>
+                                                <option value="">Sem turma</option>
+                                                @foreach ($turmasList as $turma)
+                                                    <option value="{{ $turma->id }}">{{ $turma->nome }}</option>
+                                                @endforeach
+                                            </select>
+                                        </label>
+                                    </div>
+
+                                    <div class="mt-4 space-y-3" data-participants-search-results>
+                                        <p class="text-sm text-slate-500">Digite para buscar alunos disponiveis.</p>
+                                    </div>
+                                </section>
+
+                                <section>
+                                    <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">Cadastrar novo aluno</h4>
+                                    <form method="POST" action="{{ $participantsCreateRoute }}">
+                                        @csrf
+                                        <input type="hidden" name="enroll_now" value="0">
+                                        <div class="course-editor__row">
+                                            <label class="course-field">
+                                                <span>Nome completo</span>
+                                                <input type="text" name="name" required placeholder="Nome do aluno">
+                                            </label>
+                                            <label class="course-field">
+                                                <span>Email</span>
+                                                <input type="email" name="email" required placeholder="email@exemplo.com">
+                                            </label>
+                                        </div>
+                                        <div class="course-editor__row">
+                                            <label class="course-field">
+                                                <span>Telefone (opcional)</span>
+                                                <input type="text" name="phone" placeholder="(00) 00000-0000">
+                                            </label>
+                                            <label class="course-field">
+                                                <span>Senha (opcional)</span>
+                                                <input type="text" name="password" placeholder="Deixe em branco para gerar">
+                                            </label>
+                                        </div>
+                                        <div class="course-editor__row">
+                                            <label class="course-field">
+                                                <span>Turma (opcional)</span>
+                                                <select name="turma_id">
+                                                    <option value="">Sem turma</option>
+                                                    @foreach ($turmasList as $turma)
+                                                        <option value="{{ $turma->id }}">{{ $turma->nome }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </label>
+                                            <label class="course-field course-field--checkbox" for="enroll-now">
+                                                <input id="enroll-now" type="checkbox" name="enroll_now" value="1" checked>
+                                                <span>Matricular neste curso</span>
+                                            </label>
+                                        </div>
+                                        <div class="course-settings__actions">
+                                            <button class="btn btn-primary" type="submit">Cadastrar aluno</button>
+                                            <span class="text-sm text-slate-500">O aluno pode ser criado sem matricula imediata.</span>
+                                        </div>
+                                    </form>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 </div>
             </div>
 
@@ -756,7 +924,7 @@
                                 </div>
                             </div>
 
-                            <form method="POST" action="{{ $conteudosStoreRoute }}" enctype="multipart/form-data" data-content-form>
+                            <form method="POST" action="{{ $conteudosStoreRoute }}" enctype="multipart/form-data" data-content-form data-download-auto="1">
                                 @csrf
                                 <input type="hidden" name="aula_id" value="{{ $module['id'] }}">
                                 <div class="course-editor__row">
@@ -811,6 +979,23 @@
                                     <input type="number" name="ordem" min="0" placeholder="0">
                                 </label>
 
+                                @php
+                                    $studentCheckboxId = 'allow-download-student-' . $module['id'] . '-new';
+                                    $professorCheckboxId = 'allow-download-professor-' . $module['id'] . '-new';
+                                @endphp
+                                <div class="course-editor__row">
+                                    <input type="hidden" name="allow_download_student" value="0">
+                                    <label class="course-field course-field--checkbox" for="{{ $studentCheckboxId }}">
+                                        <input id="{{ $studentCheckboxId }}" type="checkbox" name="allow_download_student" value="1" checked>
+                                        <span>Permitir download para alunos</span>
+                                    </label>
+                                    <input type="hidden" name="allow_download_professor" value="0">
+                                    <label class="course-field course-field--checkbox" for="{{ $professorCheckboxId }}">
+                                        <input id="{{ $professorCheckboxId }}" type="checkbox" name="allow_download_professor" value="1" checked>
+                                        <span>Permitir download para professores</span>
+                                    </label>
+                                </div>
+
                                 <div class="course-settings__actions">
                                     <button class="btn btn-primary" type="submit">Salvar</button>
                                     <a class="btn btn-ghost" href="{{ $conteudosPreviewRoute }}" target="_blank" rel="noopener noreferrer">Ver</a>
@@ -826,6 +1011,12 @@
                             $itemType = $item['type'] ?? 'lesson';
                             $updateRoute = route("{$role}.cursos.conteudos.update", [$curso, $item['id']]);
                             $arquivoUrl = $item['arquivo'] ? asset('storage/' . $item['arquivo']) : null;
+                            $allowDownloadStudent = array_key_exists('allow_download_student', $item)
+                                ? (bool) $item['allow_download_student']
+                                : $itemType !== 'video';
+                            $allowDownloadProfessor = array_key_exists('allow_download_professor', $item)
+                                ? (bool) $item['allow_download_professor']
+                                : true;
                             $typeMeta = [
                                 'video' => [
                                     'title' => 'Video do modulo',
@@ -1060,6 +1251,23 @@
                                         <p class="course-file">Arquivo atual: <a href="{{ $arquivoUrl }}" target="_blank" rel="noopener noreferrer">Abrir</a></p>
                                     @endif
 
+                                    @php
+                                        $studentCheckboxId = 'allow-download-student-' . $item['id'];
+                                        $professorCheckboxId = 'allow-download-professor-' . $item['id'];
+                                    @endphp
+                                    <div class="course-editor__row">
+                                        <input type="hidden" name="allow_download_student" value="0">
+                                        <label class="course-field course-field--checkbox" for="{{ $studentCheckboxId }}">
+                                            <input id="{{ $studentCheckboxId }}" type="checkbox" name="allow_download_student" value="1" {{ $allowDownloadStudent ? 'checked' : '' }}>
+                                            <span>Permitir download para alunos</span>
+                                        </label>
+                                        <input type="hidden" name="allow_download_professor" value="0">
+                                        <label class="course-field course-field--checkbox" for="{{ $professorCheckboxId }}">
+                                            <input id="{{ $professorCheckboxId }}" type="checkbox" name="allow_download_professor" value="1" {{ $allowDownloadProfessor ? 'checked' : '' }}>
+                                            <span>Permitir download para professores</span>
+                                        </label>
+                                    </div>
+
                                     <div class="course-settings__actions">
                                         <button class="btn btn-primary" type="submit">Salvar</button>
                                         <a class="btn btn-ghost" href="{{ $conteudosPreviewRoute }}" target="_blank" rel="noopener noreferrer">Ver</a>
@@ -1222,6 +1430,34 @@
                 form.scrollIntoView({ behavior: 'smooth', block: 'start' });
             };
 
+            const applyDownloadDefault = (form, type) => {
+                if (!form || form.dataset.downloadAuto !== '1') return;
+                const checkboxStudent = form.querySelector('input[name="allow_download_student"][type="checkbox"]');
+                const checkboxProfessor = form.querySelector('input[name="allow_download_professor"][type="checkbox"]');
+                if (!checkboxStudent || !checkboxProfessor) return;
+                checkboxStudent.checked = type !== 'video';
+                checkboxProfessor.checked = true;
+            };
+
+            root.querySelectorAll('[data-content-form]').forEach((form) => {
+                if (form.dataset.downloadAuto !== '1') return;
+                const typeSelect = form.querySelector('[data-content-type]');
+                if (!typeSelect) return;
+                const checkboxStudent = form.querySelector('input[name="allow_download_student"][type="checkbox"]');
+                const checkboxProfessor = form.querySelector('input[name="allow_download_professor"][type="checkbox"]');
+                if (checkboxStudent && checkboxProfessor) {
+                    const lockDefaults = () => {
+                        form.dataset.downloadAuto = '0';
+                    };
+                    checkboxStudent.addEventListener('change', lockDefaults);
+                    checkboxProfessor.addEventListener('change', lockDefaults);
+                }
+                applyDownloadDefault(form, typeSelect.value);
+                typeSelect.addEventListener('change', () => {
+                    applyDownloadDefault(form, typeSelect.value);
+                });
+            });
+
             const quickButtons = root.querySelectorAll('[data-quick-action]');
             quickButtons.forEach((button) => {
                 button.addEventListener('click', () => {
@@ -1235,6 +1471,250 @@
                     openContentForm(targetPanel, button.dataset.quickAction, button.dataset.quickPickfile === '1');
                 });
             });
+
+            const participantsRoot = root.querySelector('[data-participants-root]');
+            if (participantsRoot) {
+                const searchRoute = participantsRoot.dataset.searchRoute;
+                const enrollRoute = participantsRoot.dataset.enrollRoute;
+                const modal = root.querySelector('[data-participants-modal]');
+                const openButtons = root.querySelectorAll('[data-participants-open]');
+                const feedback = root.querySelector('[data-participants-feedback]');
+                const searchInput = root.querySelector('[data-participants-search-input]');
+                const results = root.querySelector('[data-participants-search-results]');
+                const turmaSelect = root.querySelector('[data-participants-turma-select]');
+                const participantsList = root.querySelector('[data-participants-list]');
+                const participantsTable = root.querySelector('[data-participants-table]');
+                const countElement = root.querySelector('[data-participants-count]');
+                const emptyState = root.querySelector('[data-participants-empty]');
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                let searchTimeout = null;
+                let activeController = null;
+
+                const showFeedback = (message, type) => {
+                    if (!feedback) return;
+                    feedback.textContent = message;
+                    feedback.className = `course-settings__notice course-settings__notice--${type}`;
+                    feedback.hidden = false;
+                };
+
+                const clearFeedback = () => {
+                    if (!feedback) return;
+                    feedback.hidden = true;
+                    feedback.textContent = '';
+                };
+
+                const toggleModal = (isOpen) => {
+                    if (!modal) return;
+                    modal.classList.toggle('hidden', !isOpen);
+                    modal.classList.toggle('flex', isOpen);
+                    modal.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+                    if (!isOpen) {
+                        clearFeedback();
+                    }
+                };
+
+                openButtons.forEach((button) => {
+                    button.addEventListener('click', () => toggleModal(true));
+                });
+
+                if (modal) {
+                    modal.querySelectorAll('[data-participants-close]').forEach((button) => {
+                        button.addEventListener('click', () => toggleModal(false));
+                    });
+
+                    modal.addEventListener('click', (event) => {
+                        if (event.target === modal) {
+                            toggleModal(false);
+                        }
+                    });
+                }
+
+                const renderSearchState = (text) => {
+                    if (!results) return;
+                    results.innerHTML = '';
+                    const message = document.createElement('p');
+                    message.className = 'text-sm text-slate-500';
+                    message.textContent = text;
+                    results.appendChild(message);
+                };
+
+                const renderStudents = (students) => {
+                    if (!results) return;
+                    results.innerHTML = '';
+                    if (!students.length) {
+                        renderSearchState('Nenhum aluno encontrado para este termo.');
+                        return;
+                    }
+
+                    students.forEach((student) => {
+                        const item = document.createElement('div');
+                        item.className = 'flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 px-4 py-3';
+
+                        const info = document.createElement('div');
+                        const name = document.createElement('strong');
+                        name.textContent = student.name || 'Aluno';
+                        const email = document.createElement('div');
+                        email.className = 'text-sm text-slate-500';
+                        email.textContent = student.email || 'Sem email';
+                        info.appendChild(name);
+                        info.appendChild(email);
+
+                        const action = document.createElement('button');
+                        action.type = 'button';
+                        action.className = 'btn btn-secondary';
+                        action.textContent = 'Inscrever';
+                        action.dataset.studentId = student.id;
+                        action.dataset.studentName = student.name || '';
+                        action.dataset.studentEmail = student.email || '';
+
+                        item.appendChild(info);
+                        item.appendChild(action);
+                        results.appendChild(item);
+                    });
+                };
+
+                const runSearch = (term) => {
+                    if (!results || !searchRoute) return;
+                    const cleanTerm = term.trim();
+                    if (cleanTerm.length < 2) {
+                        renderSearchState('Digite ao menos 2 caracteres para buscar.');
+                        return;
+                    }
+
+                    if (activeController) {
+                        activeController.abort();
+                    }
+                    activeController = new AbortController();
+
+                    fetch(`${searchRoute}?q=${encodeURIComponent(cleanTerm)}`, {
+                        headers: {
+                            Accept: 'application/json',
+                        },
+                        signal: activeController.signal,
+                    })
+                        .then((response) => response.json())
+                        .then((payload) => {
+                            renderStudents(payload.students || []);
+                        })
+                        .catch((error) => {
+                            if (error.name === 'AbortError') return;
+                            renderSearchState('Erro ao buscar alunos. Tente novamente.');
+                        });
+                };
+
+                if (searchInput) {
+                    searchInput.addEventListener('input', () => {
+                        clearFeedback();
+                        if (searchTimeout) {
+                            clearTimeout(searchTimeout);
+                        }
+                        searchTimeout = setTimeout(() => runSearch(searchInput.value), 350);
+                    });
+                }
+
+                const formatDate = (date) => {
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                };
+
+                const appendParticipantRow = (student, turmaLabel) => {
+                    if (!participantsList) return;
+                    const row = document.createElement('tr');
+                    row.dataset.participantId = student.id || '';
+
+                    const nameCell = document.createElement('td');
+                    const name = document.createElement('strong');
+                    name.textContent = student.name || 'Aluno';
+                    const email = document.createElement('small');
+                    email.textContent = student.email || 'Sem email';
+                    nameCell.appendChild(name);
+                    nameCell.appendChild(document.createElement('br'));
+                    nameCell.appendChild(email);
+
+                    const turmaCell = document.createElement('td');
+                    turmaCell.textContent = turmaLabel || 'Sem turma';
+
+                    const statusCell = document.createElement('td');
+                    statusCell.textContent = 'Ativo';
+
+                    const dateCell = document.createElement('td');
+                    dateCell.textContent = formatDate(new Date());
+
+                    row.appendChild(nameCell);
+                    row.appendChild(turmaCell);
+                    row.appendChild(statusCell);
+                    row.appendChild(dateCell);
+
+                    participantsList.appendChild(row);
+                };
+
+                if (results && enrollRoute) {
+                    results.addEventListener('click', (event) => {
+                        const button = event.target.closest('[data-student-id]');
+                        if (!button) return;
+                        clearFeedback();
+
+                        const studentId = button.dataset.studentId;
+                        const turmaId = turmaSelect?.value || '';
+                        const turmaLabel = turmaSelect?.selectedOptions?.[0]?.textContent || 'Sem turma';
+
+                        button.disabled = true;
+                        button.textContent = 'Inscrevendo...';
+
+                        fetch(enrollRoute, {
+                            method: 'POST',
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                                'X-CSRF-TOKEN': csrfToken || '',
+                            },
+                            body: new URLSearchParams({
+                                aluno_id: studentId,
+                                turma_id: turmaId,
+                            }),
+                        })
+                            .then(async (response) => {
+                                const payload = await response.json().catch(() => ({}));
+                                if (!response.ok) {
+                                    throw new Error(payload.message || 'Erro ao inscrever aluno.');
+                                }
+                                return payload;
+                            })
+                            .then(() => {
+                                appendParticipantRow({
+                                    id: studentId,
+                                    name: button.dataset.studentName,
+                                    email: button.dataset.studentEmail,
+                                }, turmaLabel);
+
+                                button.textContent = 'Inscrito';
+
+                                if (countElement) {
+                                    const current = Number(countElement.dataset.count || countElement.textContent) || 0;
+                                    const next = current + 1;
+                                    countElement.dataset.count = String(next);
+                                    countElement.textContent = String(next);
+                                }
+
+                                if (emptyState) {
+                                    emptyState.remove();
+                                }
+                                if (participantsTable) {
+                                    participantsTable.classList.remove('hidden');
+                                }
+
+                                showFeedback('Aluno inscrito com sucesso.', 'success');
+                            })
+                            .catch((error) => {
+                                button.disabled = false;
+                                button.textContent = 'Inscrever';
+                                showFeedback(error.message, 'error');
+                            });
+                    });
+                }
+            }
 
             activate(defaultPanel);
         });

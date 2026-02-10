@@ -38,9 +38,16 @@
                     $pdfUrl = $arquivoUrl ?? $conteudo->url;
                 @endphp
                 @if($pdfUrl)
+                    @php
+                        $canDownload = auth()->check() && auth()->user()->role === 'professor'
+                            ? (bool) $conteudo->allow_download_professor
+                            : (bool) $conteudo->allow_download_student;
+                    @endphp
                     <div class="flex flex-wrap gap-3">
                         <a href="{{ $pdfUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Abrir PDF</a>
-                        <a href="{{ $pdfUrl }}" download class="inline-flex items-center bg-indigo-100 text-indigo-800 px-4 py-2 rounded hover:bg-indigo-200">Baixar PDF</a>
+                        @if($canDownload)
+                            <a href="{{ $pdfUrl }}" download class="inline-flex items-center bg-indigo-100 text-indigo-800 px-4 py-2 rounded hover:bg-indigo-200">Baixar PDF</a>
+                        @endif
                     </div>
                 @else
                     <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">PDF não disponível</div>
@@ -68,7 +75,9 @@
                 @if($fileUrl)
                     <div class="flex flex-wrap gap-3">
                         <a href="{{ $fileUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center bg-gray-900 text-white px-4 py-2 rounded hover:bg-black">Abrir arquivo</a>
-                        <a href="{{ $fileUrl }}" download class="inline-flex items-center bg-gray-100 text-gray-900 px-4 py-2 rounded hover:bg-gray-200">Baixar arquivo</a>
+                        @if($canDownload)
+                            <a href="{{ $fileUrl }}" download class="inline-flex items-center bg-gray-100 text-gray-900 px-4 py-2 rounded hover:bg-gray-200">Baixar arquivo</a>
+                        @endif
                     </div>
                 @else
                     <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">Arquivo não disponível</div>

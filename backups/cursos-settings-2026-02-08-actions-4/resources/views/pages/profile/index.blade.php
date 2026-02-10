@@ -1,0 +1,29 @@
+@extends('layouts.page')
+
+@section('content')
+@push('styles')
+<link rel="stylesheet" href="{{ asset('pages/profile/style.css') }}">
+@endpush
+
+<div class="profile-container">
+    <h1>{{ __('Profile') }}</h1>
+    
+    <div class="profile-sections">
+        <section class="profile-section">
+            @include('profile.partials.update-profile-information-form')
+        </section>
+
+        <section class="profile-section">
+            @include('profile.partials.update-password-form')
+        </section>
+
+        <section class="profile-section">
+            @include('profile.partials.delete-user-form')
+        </section>
+    </div>
+</div>
+
+@push('scripts')
+<script src="{{ asset('pages/profile/script.js') }}" defer></script>
+@endpush
+@endsection
