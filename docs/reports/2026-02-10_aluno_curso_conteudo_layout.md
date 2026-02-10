@@ -1,6 +1,7 @@
 # Atualizacoes Barra de progresso e layout pagina alunos/cursos/conteudos
 
 Data: 2026-02-10
+Atualizado em: 2026-02-10
 
 Resumo
 - Ajustes no layout do preview para ocupar mais altura e largura, com section esticando via flex.
