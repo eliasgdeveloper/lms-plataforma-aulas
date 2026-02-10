@@ -1,4 +1,4 @@
-# Aluno curso conteudo - layout e progresso
+# Atualizacoes Barra de progresso e layout pagina alunos/cursos/conteudos
 
 Data: 2026-02-10
 
