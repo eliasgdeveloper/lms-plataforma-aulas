@@ -404,23 +404,33 @@
 }
 
 .course-module__item--alert::before {
-    content: '⚠';
+    content: "\f071";
+    font-family: "Font Awesome 7 Free";
+    font-weight: 900;
 }
 
 .course-module__item--lesson::before {
-    content: '▶';
+    content: "\f04b";
+    font-family: "Font Awesome 7 Free";
+    font-weight: 900;
 }
 
 .course-module__item--quiz::before {
-    content: '✦';
+    content: "\f005";
+    font-family: "Font Awesome 7 Free";
+    font-weight: 900;
 }
 
 .course-module__item--video::before {
-    content: 'V';
+    content: "\f03d";
+    font-family: "Font Awesome 7 Free";
+    font-weight: 900;
 }
 
 .course-module__item--pdf::before {
-    content: 'D';
+    content: "\f1c1";
+    font-family: "Font Awesome 7 Free";
+    font-weight: 900;
 }
 
 .course-module__item--link::before {

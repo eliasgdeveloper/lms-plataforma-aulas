@@ -21,6 +21,7 @@ $extraDone = !empty($progresso['extra_done']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow, noarchive">
     <title>Bem-vindo · Elias Gomes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
@@ -118,7 +119,7 @@ $extraDone = !empty($progresso['extra_done']);
             }
             ?>
         </p>
-        <div class="score">Arena PHP · <?php echo (int) $pontos; ?> pts · <?php echo (int) $concluidas; ?>/8 missões<?php echo $extraDone ? ' · Extra ★' : ''; ?> · progresso salvo</div>
+        <div class="score">Arena PHP · <?php echo (int) $pontos; ?> pts · <?php echo (int) $concluidas; ?>/8 missões<?php echo $extraDone ? ' · <i class="fa-solid fa-star" aria-hidden="true"></i> Extra' : ''; ?> · progresso salvo</div>
         <div class="actions">
             <a href="desafio.php">Entrar no desafio PHP (Arena 1)</a>
             <a href="desafio_sprint2.php" style="margin-left:10px">Arena Sprint 2 · War Room</a>

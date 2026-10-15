@@ -333,6 +333,9 @@ button.ghost {
 }
 
 .feedback-msg {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
     margin: 0;
     line-height: 1.45;
 }
@@ -365,7 +368,10 @@ button.ghost {
 }
 
 .feedback-report .acertou li::before {
-    content: "✓ ";
+    content: "\f00c";
+    font-family: "Font Awesome 7 Free";
+    font-weight: 900;
+    margin-right: 6px;
     font-weight: 800;
 }
 
@@ -577,7 +583,9 @@ button.ghost {
 }
 
 .feedback-report .acertou li::before {
-    content: "✓ ";
+    content: "\f00c";
+    font-family: "Font Awesome 7 Free";
+    margin-right: 6px;
     font-weight: 800;
     color: var(--ok);
 }

@@ -58,25 +58,28 @@
     }
 
     var avatars = {
-        starter: "🐣",
-        fox: "🦊",
-        robot: "🤖",
-        wizard: "🧙",
-        ninja: "🥷",
-        champion: "🏆",
-        star: "⭐"
+        starter: "seedling",
+        fox: "user-astronaut",
+        robot: "robot",
+        wizard: "hat-wizard",
+        ninja: "user-ninja",
+        champion: "trophy",
+        star: "star"
     };
 
     var surpriseIcon = {
-        avatar_fox: "🦊",
-        badge_contador: "🔢",
-        avatar_robot: "🤖",
-        badge_indice: "🎯",
-        avatar_wizard: "🧙",
-        badge_map: "🗺️",
-        avatar_ninja: "🥷",
-        trophy: "🏆",
-        estrela_extra: "⭐"
+        avatar_fox: "user-astronaut",
+        badge_contador: "hashtag",
+        avatar_robot: "robot",
+        badge_indice: "crosshairs",
+        avatar_wizard: "hat-wizard",
+        badge_map: "map",
+        avatar_ninja: "user-ninja",
+        trophy: "trophy",
+        estrela_extra: "star"
+    };
+    var iconMarkup = function (icon) {
+        return '<i class="fa-solid fa-' + icon + '" aria-hidden="true"></i>';
     };
 
     var missaoHooks = {
@@ -244,7 +247,7 @@
         if (!state.extraUnlocked) {
             btn.classList.add("locked");
             btn.disabled = true;
-            els.extraIco.textContent = "🔒";
+            els.extraIco.innerHTML = iconMarkup("lock");
             els.extraTitle.textContent = "Relatório do Diretor";
             els.extraMeta.textContent = "Bloqueado · termine as 8 missões";
             return;
@@ -253,7 +256,7 @@
         btn.classList.add("unlocked");
         if (state.modoExtra) btn.classList.add("active");
         if (state.extraDone) btn.classList.add("done");
-        els.extraIco.textContent = state.extraDone ? "⭐" : "🔓";
+        els.extraIco.innerHTML = iconMarkup(state.extraDone ? "star" : "lock-open");
         els.extraTitle.textContent = data.extra.titulo.replace(/^Desafio Extra · /, "");
         els.extraMeta.textContent = state.extraDone
             ? "Conquistado · " + data.extra.pontos + " pts · pode treinar de novo"
@@ -327,8 +330,10 @@
     function renderStats() {
         els.pontos.textContent = state.pontos + " pts";
         var base = state.concluidas.length + "/" + data.etapas.length + " missões";
-        els.progresso.textContent = state.extraDone ? base + " · Extra ★" : base;
-        els.avatar.textContent = avatars[state.avatar] || avatars.starter;
+        els.progresso.innerHTML = state.extraDone
+            ? base + ' · <i class="fa-solid fa-star" aria-hidden="true"></i> Extra'
+            : base;
+        els.avatar.innerHTML = iconMarkup(avatars[state.avatar] || avatars.starter);
     }
 
     function renderRewards() {
@@ -354,7 +359,12 @@
 
         var msg = document.createElement("p");
         msg.className = "feedback-msg";
-        msg.textContent = message || "";
+        var icon = document.createElement("i");
+        icon.className = "fa-solid " + (warn ? "fa-circle-info" : ok ? "fa-circle-check" : "fa-circle-xmark");
+        icon.setAttribute("aria-hidden", "true");
+        var text = document.createElement("span");
+        text.textContent = message || "";
+        msg.append(icon, text);
         els.feedback.appendChild(msg);
 
         var hasAcertos = acertos && acertos.length;
@@ -438,7 +448,7 @@
         var isExtra = !!payload.extra;
         try {
             if (els.modalBox) els.modalBox.classList.toggle("extra-mode", isExtra);
-            els.modalIcon.textContent = surpriseIcon[payload.surpresa] || (isExtra ? "⭐" : "✨");
+            els.modalIcon.innerHTML = iconMarkup(surpriseIcon[payload.surpresa] || (isExtra ? "star" : "wand-magic-sparkles"));
             els.modalTitle.textContent = payload.modal_title || (isExtra
                 ? "Desafio Extra conquistado, " + firstName + "!"
                 : "Surpresa pra você, " + firstName + "!");
@@ -551,7 +561,7 @@
             if (!state.extraUnlocked) {
                 showFeedback(
                     false,
-                    firstName + ", esse código é do Desafio Extra. Termine as 8 missões primeiro para liberar a estrela ⭐."
+                    firstName + ", esse código é do Desafio Extra. Termine as 8 missões primeiro para liberar a estrela."
                 );
                 playSound("funny");
                 return;

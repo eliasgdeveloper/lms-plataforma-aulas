@@ -733,7 +733,7 @@ document.addEventListener('DOMContentLoaded', function () {
         wrap.className = 'desafio-win';
         wrap.innerHTML = ''
             + '<div class="desafio-win__card">'
-            +   (badgeUrl ? '<img class="desafio-win__badge" src="' + escapeHtml(badgeUrl) + '" alt="Selo">' : '<div class="desafio-win__emoji">🦊</div>')
+            +   (badgeUrl ? '<img class="desafio-win__badge" src="' + escapeHtml(badgeUrl) + '" alt="Selo">' : '<div class="desafio-win__icon"><i class="fa-solid fa-user-astronaut" aria-hidden="true"></i></div>')
             +   '<h3>' + escapeHtml(title) + '</h3>'
             +   '<p>' + escapeHtml(body) + '</p>'
             +   '<button type="button" class="btn btn-primary" data-win-close>Continuar a trilha</button>'
@@ -855,7 +855,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         send.textContent = 'Enviar ao juiz';
                         bubble.hidden = false;
                         bubble.className = 'juiz-bubble juiz-bubble--' + (data.mood || (data.ok ? 'pass' : 'almost'));
-                        let inner = '<div class="juiz-bubble__face">' + (data.ok ? '🥳' : (data.mood === 'nudge' ? '🙂' : '😅')) + '</div>';
+                        let inner = '<div class="juiz-bubble__face"><i class="fa-solid ' + (data.ok ? 'fa-face-smile-beam' : (data.mood === 'nudge' ? 'fa-face-smile' : 'fa-face-frown')) + '" aria-hidden="true"></i></div>';
                         inner += '<div><p>' + escapeHtml(data.message || '') + '</p>';
                         if (data.hints && data.hints.length) {
                             inner += '<ul>';
@@ -928,7 +928,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             applySidebarBadge(data.badge || pack.badge);
                             showDesafioWinModal(
                                 'Selo desbloqueado: ' + (pack.badge_name || 'Caixa Litoral'),
-                                pack.soon_message || 'Em breve teremos mais desafios, quiz, testes, provas e conteúdos por aqui — esta matéria é muito importante 😊 Você está indo bem, e repetir código ajuda a memorizar para a carreira PHP.',
+                                pack.soon_message || 'Em breve teremos mais desafios, quiz, testes, provas e conteúdos por aqui — esta matéria é muito importante. Você está indo bem, e repetir código ajuda a memorizar para a carreira PHP.',
                                 data.badge || pack.badge
                             );
                             qbtn.disabled = true;

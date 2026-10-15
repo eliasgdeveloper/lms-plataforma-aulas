@@ -83,6 +83,7 @@ if ($backToCourse === '' || $backToCourse[0] !== '/' || str_starts_with($backToC
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow, noarchive">
     <title>Arena 2 · Caixa Litoral</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -91,7 +92,7 @@ if ($backToCourse === '' || $backToCourse[0] !== '/' || str_starts_with($backToC
 <body class="<?php echo $isEmbed ? 'is-embed' : ''; ?>">
     <header class="topbar">
         <div class="brand">
-            <div class="avatar" id="avatar" aria-hidden="true">🦊</div>
+            <div class="avatar" id="avatar" aria-hidden="true"><i class="fa-solid fa-user-astronaut"></i></div>
             <div>
                 <h1>Arena 2 · <?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?></h1>
                 <p>8 missões + Desafio Extra · feito pra você, <?php echo htmlspecialchars(explode(' ', trim($name))[0], ENT_QUOTES, 'UTF-8'); ?></p>
@@ -119,7 +120,7 @@ if ($backToCourse === '' || $backToCourse[0] !== '/' || str_starts_with($backToC
             <div class="extra-gate" id="extra-gate">
                 <p class="extra-label">Desafio Extra</p>
                 <button type="button" class="extra-card locked" id="btn-extra" disabled>
-                    <span class="extra-ico" id="extra-ico">🔒</span>
+                    <span class="extra-ico" id="extra-ico"><i class="fa-solid fa-lock" aria-hidden="true"></i></span>
                     <strong id="extra-title">Relatório do Diretor</strong>
                     <span class="meta" id="extra-meta">Bloqueado · termine as 8 missões</span>
                 </button>
@@ -152,22 +153,22 @@ if ($backToCourse === '' || $backToCourse[0] !== '/' || str_starts_with($backToC
             <div class="feedback" id="feedback"></div>
 
             <div class="rewards" id="rewards">
-                <div class="reward-card" data-reward="avatar_fox"><div class="ico">🦊</div><div class="t">Raposa Coder</div></div>
-                <div class="reward-card" data-reward="badge_contador"><div class="ico">🔢</div><div class="t">Contador Oficial</div></div>
-                <div class="reward-card" data-reward="avatar_robot"><div class="ico">🤖</div><div class="t">Robô PHP</div></div>
-                <div class="reward-card" data-reward="badge_indice"><div class="ico">🎯</div><div class="t">Mestre dos Índices</div></div>
-                <div class="reward-card" data-reward="avatar_wizard"><div class="ico">🧙</div><div class="t">Mago do Código</div></div>
-                <div class="reward-card" data-reward="badge_map"><div class="ico">🗺️</div><div class="t">Array Map Hero</div></div>
-                <div class="reward-card" data-reward="avatar_ninja"><div class="ico">🥷</div><div class="t">Ninja dos Loops</div></div>
-                <div class="reward-card" data-reward="trophy"><div class="ico">🏆</div><div class="t">Campeão PHP</div></div>
-                <div class="reward-card reward-extra" data-reward="estrela_extra"><div class="ico">⭐</div><div class="t">Estrela Extra</div></div>
+                <div class="reward-card" data-reward="avatar_fox"><div class="ico"><i class="fa-solid fa-user-astronaut" aria-hidden="true"></i></div><div class="t">Raposa Coder</div></div>
+                <div class="reward-card" data-reward="badge_contador"><div class="ico"><i class="fa-solid fa-hashtag" aria-hidden="true"></i></div><div class="t">Contador Oficial</div></div>
+                <div class="reward-card" data-reward="avatar_robot"><div class="ico"><i class="fa-solid fa-robot" aria-hidden="true"></i></div><div class="t">Robô PHP</div></div>
+                <div class="reward-card" data-reward="badge_indice"><div class="ico"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i></div><div class="t">Mestre dos Índices</div></div>
+                <div class="reward-card" data-reward="avatar_wizard"><div class="ico"><i class="fa-solid fa-hat-wizard" aria-hidden="true"></i></div><div class="t">Mago do Código</div></div>
+                <div class="reward-card" data-reward="badge_map"><div class="ico"><i class="fa-solid fa-map" aria-hidden="true"></i></div><div class="t">Array Map Hero</div></div>
+                <div class="reward-card" data-reward="avatar_ninja"><div class="ico"><i class="fa-solid fa-user-ninja" aria-hidden="true"></i></div><div class="t">Ninja dos Loops</div></div>
+                <div class="reward-card" data-reward="trophy"><div class="ico"><i class="fa-solid fa-trophy" aria-hidden="true"></i></div><div class="t">Campeão PHP</div></div>
+                <div class="reward-card reward-extra" data-reward="estrela_extra"><div class="ico"><i class="fa-solid fa-star" aria-hidden="true"></i></div><div class="t">Estrela Extra</div></div>
             </div>
         </section>
     </div>
 
     <div class="overlay" id="overlay">
         <div class="modal" id="modal-box">
-            <div class="big" id="modal-icon">✨</div>
+            <div class="big" id="modal-icon"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></div>
             <h3 id="modal-title">Surpresa!</h3>
             <p id="modal-text"></p>
             <button class="primary" id="btn-close-modal" type="button">Continuar</button>

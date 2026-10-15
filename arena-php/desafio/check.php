@@ -78,7 +78,7 @@ function desafio_fala_surpresa($nome, $etapaId, $textoBase, $completo)
 function desafio_fala_erro($nome, $tipo, $extra = '')
 {
     if ($tipo === 'tokens') {
-        return "Calma, {$nome}! No código ainda falta: {$extra}. Respira e tenta de novo 😄";
+        return "Calma, {$nome}! No código ainda falta: {$extra}. Respira e tenta de novo.";
     }
     if ($tipo === 'saida_vazia') {
         return "{$nome}, cola também a saída do echo. Sem resultado, o juiz PHP fica confuso.";
@@ -313,7 +313,7 @@ if (desafio_parece_codigo_extra($codigo) && (string) $etapaRaw !== 'extra') {
         'ok' => false,
         'parece_extra' => true,
         'message' => "{$nome}, esse código é do Desafio Extra (Relatório do Diretor). "
-            . "Abra o Extra pela estrela ⭐ ao lado das missões e valide por lá — "
+            . "Abra o Extra pelo ícone ao lado das missões e valide por lá — "
             . "aqui o juiz está no modo Missão e vai reclamar de tokens errados.",
         'sound' => 'funny',
         'pontos' => (int) $state['pontos'],
