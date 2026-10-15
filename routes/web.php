@@ -3,7 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConteudoController;
 use App\Http\Controllers\CursoController;
-use App\Models\User;
+use App\Http\Controllers\ViewAsController;
+use App\Support\ViewAs;
 
 /**
  * Web Routes
@@ -18,6 +19,13 @@ use App\Models\User;
 
 // ===== PUBLIC ROUTES =====
 Route::get('/', function () {
+    $user = auth()->user();
+    if ($user) {
+        $target = ViewAs::homeFor(ViewAs::effectiveRole());
+
+        return redirect()->to($target);
+    }
+
     return view('pages.welcome.index');
 });
 
@@ -34,6 +42,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
         return view('pages.dashboard.index');
     })->name('dashboard');
+
+    Route::get('aluno/arena/entrar', \App\Http\Controllers\ArenaSsoController::class)
+        ->name('aluno.arena.entrar');
+
+    Route::get('papel', [ViewAsController::class, 'edit'])->name('view-as.edit');
+    Route::post('papel', [ViewAsController::class, 'update'])->name('view-as.update');
 
     // Professor area
     Route::prefix('professor')->middleware('role:professor')->group(function () {
@@ -105,7 +119,33 @@ Route::middleware(['auth'])->group(function () {
     // Aluno area
     Route::prefix('aluno')->middleware('role:aluno')->group(function () {
         Route::get('/', function () {
-            return view('pages.aluno_dashboard.index');
+            $user = auth()->user();
+            $todayActive = false;
+            $streak = 0;
+            if ($user) {
+                $days = \App\Models\ConteudoProgresso::query()
+                    ->where('user_id', $user->id)
+                    ->where('updated_at', '>=', now()->subDays(30))
+                    ->get(['updated_at'])
+                    ->map(fn ($row) => $row->updated_at?->toDateString())
+                    ->filter()
+                    ->unique()
+                    ->values()
+                    ->all();
+                $set = array_flip($days);
+                $today = now()->toDateString();
+                $todayActive = isset($set[$today]);
+                $cursor = $todayActive ? now() : now()->subDay();
+                while (isset($set[$cursor->toDateString()])) {
+                    $streak++;
+                    $cursor = $cursor->subDay();
+                }
+            }
+
+            return view('pages.aluno_dashboard.index', [
+                'chamaLit' => $todayActive,
+                'chamaStreak' => $streak,
+            ]);
         })->name('aluno.dashboard');
 
         Route::get('aulas', function () {
@@ -135,6 +175,11 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('/conteudos/{conteudo}/progress', [ConteudoController::class, 'updateProgress'])
             ->name('conteudos.progress');
+
+        Route::post('/conteudos/{conteudo}/desafio-prova', [\App\Http\Controllers\DesafioProvaController::class, 'judge'])
+            ->name('conteudos.desafio.judge');
+        Route::post('/conteudos/{conteudo}/desafio-prova/quiz', [\App\Http\Controllers\DesafioProvaController::class, 'completeQuiz'])
+            ->name('conteudos.desafio.quiz');
     });
 });
 

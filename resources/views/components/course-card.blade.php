@@ -8,6 +8,11 @@
     @if ($cardUrl)
         <a class="course-card__link" href="{{ $cardUrl }}" aria-label="Abrir configuracoes do curso"></a>
     @endif
+    @if (!empty($course['cover_url']))
+        <div class="course-card__cover">
+            <img src="{{ $course['cover_url'] }}" alt="Capa do curso {{ $course['title'] }}" loading="lazy">
+        </div>
+    @endif
     <header class="course-card__header">
         <div class="course-card__badge" aria-hidden="true">{{ strtoupper(substr($course['category'], 0, 1)) }}</div>
         <div>
@@ -52,7 +57,7 @@
         <div class="course-card__actions">
             @if (!empty($course['is_enrolled']))
                 <a class="btn btn-primary" href="{{ $course['access_url'] ?? '#' }}">Acessar</a>
-                <span class="btn btn-ghost" aria-disabled="true">Matriculado</span>
+                <span class="btn btn-ghost" aria-disabled="true">{{ !empty($course['is_preview']) ? 'Prévia' : 'Matriculado' }}</span>
             @else
                 <a class="btn btn-primary" href="{{ $course['enroll_url'] }}">Matricular</a>
             @endif

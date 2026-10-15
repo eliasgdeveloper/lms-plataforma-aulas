@@ -11,8 +11,13 @@
     <!-- Sidebar -->
     <aside class="aluno-sidebar">
         <div class="sidebar-header">
-            <h2>LMS</h2>
-            <p>Plataforma de Aulas</p>
+            <div class="sidebar-brand">
+                <img src="{{ asset('codar-entrada/img/brand-mark.svg') }}" width="36" height="36" alt="" aria-hidden="true">
+                <div>
+                    <h2>LMS</h2>
+                    <p>Plataforma de Aulas</p>
+                </div>
+            </div>
         </div>
 
         <nav class="sidebar-nav">
@@ -45,7 +50,11 @@
 
         <div class="sidebar-footer">
                 <a href="{{ route('profile.edit') }}" class="user-profile">
-                <span class="avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                @if (!empty(auth()->user()->lms_badge))
+                    <img class="avatar avatar--badge" src="{{ auth()->user()->lms_badge }}" alt="Selo do desafio">
+                @else
+                    <span class="avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                @endif
                 <div class="user-info">
                     <span class="user-name">{{ auth()->user()->name }}</span>
                     <span class="user-email">{{ auth()->user()->email }}</span>

@@ -39,6 +39,7 @@ class User extends Authenticatable
         'phone',      // Telefone
         'bio',        // Bio
         'avatar',     // Avatar
+        'lms_badge',  // Selo/carinha de desafio
     ];
 
     /**

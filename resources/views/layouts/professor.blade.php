@@ -7,7 +7,12 @@
 @endpush
 
 @section('content')
-<div class="professor-wrapper">
+@php
+    $professorShell = trim($__env->yieldContent('professor-shell'));
+    $isCourseFocus = $professorShell === 'course-focus';
+@endphp
+<div class="professor-wrapper{{ $isCourseFocus ? ' professor-wrapper--course-focus' : '' }}">
+    @unless ($isCourseFocus)
     <!-- Sidebar -->
     <aside class="professor-sidebar">
         <div class="sidebar-header">
@@ -41,6 +46,11 @@
                 <span class="icon">👥</span>
                 Acompanhar Alunos
             </a>
+                <a href="{{ route('view-as.edit') }}"
+                    class="nav-link {{ request()->routeIs('view-as.edit') ? 'active' : '' }}">
+                <span class="icon">👁️</span>
+                Mudar papel
+            </a>
         </nav>
 
         <div class="sidebar-footer">
@@ -57,6 +67,7 @@
             </form>
         </div>
     </aside>
+    @endunless
 
     <!-- Main Content -->
     <main id="professor-content" class="professor-main">

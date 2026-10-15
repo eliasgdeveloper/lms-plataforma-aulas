@@ -7,6 +7,7 @@ use App\Models\Aula;
 use App\Models\Conteudo;
 use App\Models\ConteudoProgresso;
 use App\Models\Enrollment;
+use App\Support\ViewAs;
 
 class ConteudoController extends Controller
 {
@@ -46,8 +47,16 @@ class ConteudoController extends Controller
     public function updateProgress(Request $request, Conteudo $conteudo)
     {
         $user = auth()->user();
-        if (! $user || $user->role !== 'aluno') {
+        if (! $user || ($user->role !== 'aluno' && ! ViewAs::isPreview())) {
             abort(403);
+        }
+
+        if (ViewAs::isPreview()) {
+            return response()->json([
+                'progress' => (int) $request->input('progress', 0),
+                'completed' => false,
+                'preview' => true,
+            ]);
         }
 
         $cursoId = $conteudo->aula?->curso_id;
@@ -68,8 +77,15 @@ class ConteudoController extends Controller
             'progress' => 'required|integer|min:0|max:100',
         ]);
 
-        $progress = (int) $data['progress'];
+        $incoming = (int) $data['progress'];
 
+        $existing = ConteudoProgresso::query()
+            ->where('user_id', $user->id)
+            ->where('conteudo_id', $conteudo->id)
+            ->first();
+
+        // Quizzes/provas: vale a maior nota (não regride).
+        $progress = max($incoming, (int) ($existing->progresso ?? 0));
         $completed = $progress >= 90;
 
         ConteudoProgresso::updateOrCreate(
@@ -79,13 +95,14 @@ class ConteudoController extends Controller
             ],
             [
                 'progresso' => $progress,
-                'concluido' => $completed,
+                'concluido' => $completed || (bool) ($existing->concluido ?? false),
             ]
         );
 
         return response()->json([
             'progress' => $progress,
             'completed' => $completed,
+            'best' => true,
         ]);
     }
 }

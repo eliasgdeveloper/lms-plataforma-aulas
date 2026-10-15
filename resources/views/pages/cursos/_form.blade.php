@@ -63,17 +63,23 @@
                 </label>
 
                 <label>
-                    <span>Nivel</span>
-                    <select name="nivel">
-                        <option value="basico">Basico</option>
-                        <option value="intermediario">Intermediario</option>
-                        <option value="avancado">Avancado</option>
+                    <span>Nivel da trilha</span>
+                    <select name="nivel_trilha">
+                        <option value="basico" @selected(old('nivel_trilha', $course?->nivel_trilha) === 'basico')>Basico</option>
+                        <option value="intermediario" @selected(old('nivel_trilha', $course?->nivel_trilha) === 'intermediario')>Intermediario</option>
+                        <option value="avancado" @selected(old('nivel_trilha', $course?->nivel_trilha) === 'avancado')>Avancado</option>
+                        <option value="trilha_completa" @selected(old('nivel_trilha', $course?->nivel_trilha ?? 'trilha_completa') === 'trilha_completa')>Trilha completa</option>
                     </select>
                 </label>
 
                 <label>
-                    <span>Duracao estimada</span>
-                    <input type="text" name="duracao" placeholder="Ex: 24h">
+                    <span>Horas (min)</span>
+                    <input type="number" name="duracao_horas_min" min="1" max="500" placeholder="Ex: 50" value="{{ old('duracao_horas_min', $course?->duracao_horas_min) }}">
+                </label>
+
+                <label>
+                    <span>Horas (max)</span>
+                    <input type="number" name="duracao_horas_max" min="1" max="500" placeholder="Ex: 70" value="{{ old('duracao_horas_max', $course?->duracao_horas_max) }}">
                 </label>
 
                 <label>
@@ -104,7 +110,24 @@
                 <label>
                     <span>Imagem de capa</span>
                     <input type="file" name="capa" accept="image/*">
+                    @if ($course?->capa_path)
+                        <small>Capa atual: <a href="{{ $course->capaUrl() }}" target="_blank" rel="noopener">ver arquivo</a></small>
+                    @endif
                 </label>
+
+                @if ($course?->matriz_path || $course?->checklist_path)
+                    <div class="course-grid__full">
+                        <span>Documentos da trilha</span>
+                        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.35rem">
+                            @if ($course?->matrizUrl())
+                                <a href="{{ $course->matrizUrl() }}" target="_blank" rel="noopener">Matriz curricular (PDF)</a>
+                            @endif
+                            @if ($course?->checklistUrl())
+                                <a href="{{ $course->checklistUrl() }}" target="_blank" rel="noopener">Checklist detalhado (PDF)</a>
+                            @endif
+                        </div>
+                    </div>
+                @endif
 
                 <label class="course-grid__full">
                     <span>Arquivos extras (PDF, zip, imagens)</span>

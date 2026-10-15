@@ -9,6 +9,7 @@ use App\Models\Curso;
 use App\Models\Enrollment;
 use App\Models\Turma;
 use App\Models\User;
+use App\Support\ViewAs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -22,7 +23,7 @@ class CursoController extends Controller
 
     public function alunoShow(Curso $curso)
     {
-        if (! auth()->check() || auth()->user()->role !== 'aluno') {
+        if (ViewAs::effectiveRole() !== 'aluno') {
             abort(403);
         }
 
@@ -31,7 +32,7 @@ class CursoController extends Controller
             ->where('curso_id', $curso->id)
             ->exists();
 
-        if (! $isEnrolled) {
+        if (! $isEnrolled && ! ViewAs::isPreview()) {
             abort(403);
         }
         $modules = $this->buildAlunoCourseModules($curso);
@@ -107,10 +108,6 @@ class CursoController extends Controller
 
     public function professorUpdate(Request $request, Curso $curso)
     {
-        if ($curso->professor_id !== auth()->id()) {
-            abort(403);
-        }
-
         return $this->updateCourse($request, $curso, 'professor');
     }
 
@@ -126,19 +123,11 @@ class CursoController extends Controller
 
     public function professorShow(Curso $curso)
     {
-        if ($curso->professor_id !== auth()->id()) {
-            abort(403);
-        }
-
         return $this->renderSettings($curso, 'professor');
     }
 
     public function professorEdit(Curso $curso)
     {
-        if ($curso->professor_id !== auth()->id()) {
-            abort(403);
-        }
-
         return $this->renderEdit($curso, 'professor');
     }
 
@@ -149,10 +138,6 @@ class CursoController extends Controller
 
     public function professorAction(Request $request, Curso $curso, string $acao)
     {
-        if ($curso->professor_id !== auth()->id()) {
-            abort(403);
-        }
-
         return $this->handleCourseAction($request, $curso, $acao, 'professor');
     }
 
@@ -163,10 +148,6 @@ class CursoController extends Controller
 
     public function professorStoreConteudo(Request $request, Curso $curso)
     {
-        if ($curso->professor_id !== auth()->id()) {
-            abort(403);
-        }
-
         return $this->storeConteudo($request, $curso, 'professor');
     }
 
@@ -177,10 +158,6 @@ class CursoController extends Controller
 
     public function professorStoreAula(Request $request, Curso $curso)
     {
-        if ($curso->professor_id !== auth()->id()) {
-            abort(403);
-        }
-
         return $this->storeAula($request, $curso, 'professor');
     }
 
@@ -191,10 +168,6 @@ class CursoController extends Controller
 
     public function professorUpdateConteudo(Request $request, Curso $curso, Conteudo $conteudo)
     {
-        if ($curso->professor_id !== auth()->id()) {
-            abort(403);
-        }
-
         return $this->updateConteudo($request, $curso, $conteudo, 'professor');
     }
 
@@ -205,10 +178,6 @@ class CursoController extends Controller
 
     public function professorUpdateAula(Request $request, Curso $curso, Aula $aula)
     {
-        if ($curso->professor_id !== auth()->id()) {
-            abort(403);
-        }
-
         return $this->updateAula($request, $curso, $aula, 'professor');
     }
 
@@ -219,10 +188,6 @@ class CursoController extends Controller
 
     public function professorToggleConteudo(Curso $curso, Conteudo $conteudo)
     {
-        if ($curso->professor_id !== auth()->id()) {
-            abort(403);
-        }
-
         return $this->toggleConteudo($curso, $conteudo, 'professor');
     }
 
@@ -233,10 +198,6 @@ class CursoController extends Controller
 
     public function professorToggleAula(Curso $curso, Aula $aula)
     {
-        if ($curso->professor_id !== auth()->id()) {
-            abort(403);
-        }
-
         return $this->toggleAula($curso, $aula, 'professor');
     }
 
@@ -247,10 +208,6 @@ class CursoController extends Controller
 
     public function professorDestroyConteudo(Curso $curso, Conteudo $conteudo)
     {
-        if ($curso->professor_id !== auth()->id()) {
-            abort(403);
-        }
-
         return $this->destroyConteudo($curso, $conteudo, 'professor');
     }
 
@@ -261,10 +218,6 @@ class CursoController extends Controller
 
     public function professorDestroyAula(Curso $curso, Aula $aula)
     {
-        if ($curso->professor_id !== auth()->id()) {
-            abort(403);
-        }
-
         return $this->destroyAula($curso, $aula, 'professor');
     }
 
@@ -402,10 +355,6 @@ class CursoController extends Controller
 
     public function professorPreview(Curso $curso)
     {
-        if ($curso->professor_id !== auth()->id()) {
-            abort(403);
-        }
-
         return $this->previewCurso($curso);
     }
 
@@ -455,7 +404,12 @@ class CursoController extends Controller
     {
         $enrolledCourseIds = [];
         $courseProgressMap = [];
-        if (auth()->check() && auth()->user()->role === 'aluno') {
+        $previewAsStudent = ViewAs::isPreview() && ViewAs::effectiveRole() === 'aluno';
+        $actingAsStudent = auth()->check() && (
+            auth()->user()->role === 'aluno' || ViewAs::effectiveRole() === 'aluno'
+        );
+
+        if ($actingAsStudent && ! $previewAsStudent) {
             $enrolledCourseIds = Enrollment::query()
                 ->where('aluno_id', auth()->id())
                 ->pluck('curso_id')
@@ -465,13 +419,35 @@ class CursoController extends Controller
                 ->join('conteudos', 'conteudos.id', '=', 'conteudo_progresso.conteudo_id')
                 ->join('aulas', 'aulas.id', '=', 'conteudos.aula_id')
                 ->where('conteudo_progresso.user_id', auth()->id())
-                ->select('aulas.curso_id', 'conteudo_progresso.progresso')
+                ->where(function ($q) {
+                    $q->whereNull('conteudos.is_hidden')->orWhere('conteudos.is_hidden', false);
+                })
+                ->select('aulas.curso_id', 'conteudos.id as conteudo_id', 'conteudo_progresso.progresso')
                 ->get();
+
+            $totalsByCourse = \App\Models\Conteudo::query()
+                ->join('aulas', 'aulas.id', '=', 'conteudos.aula_id')
+                ->where(function ($q) {
+                    $q->whereNull('conteudos.is_hidden')->orWhere('conteudos.is_hidden', false);
+                })
+                ->where(function ($q) {
+                    $q->whereNull('aulas.is_hidden')->orWhere('aulas.is_hidden', false);
+                })
+                ->selectRaw('aulas.curso_id, COUNT(conteudos.id) as total')
+                ->groupBy('aulas.curso_id')
+                ->pluck('total', 'curso_id');
 
             $courseProgressMap = $progressRows
                 ->groupBy('curso_id')
-                ->map(function ($rows) {
-                    return (int) round($rows->avg('progresso'));
+                ->map(function ($rows, $cursoId) use ($totalsByCourse) {
+                    $total = (int) ($totalsByCourse[$cursoId] ?? 0);
+                    if ($total <= 0) {
+                        return 0;
+                    }
+                    // Média sobre TODOS os itens do curso (itens sem registro = 0%).
+                    $sum = (int) $rows->sum('progresso');
+
+                    return (int) round($sum / $total);
                 })
                 ->all();
         }
@@ -479,8 +455,9 @@ class CursoController extends Controller
         $dbCourses = Curso::with('professor')->latest()->get();
 
         if ($dbCourses->isNotEmpty()) {
-            return $dbCourses->map(function (Curso $curso) use ($enrolledCourseIds, $courseProgressMap) {
-                $isEnrolled = in_array($curso->id, $enrolledCourseIds, true);
+            return $dbCourses->map(function (Curso $curso) use ($enrolledCourseIds, $courseProgressMap, $previewAsStudent) {
+                // Na prévia Moodle o professor vê todos os cursos como se estivesse matriculado.
+                $isEnrolled = $previewAsStudent || in_array($curso->id, $enrolledCourseIds, true);
                 $progress = (int) ($courseProgressMap[$curso->id] ?? 0);
 
                 return [
@@ -488,8 +465,9 @@ class CursoController extends Controller
                     'title' => $curso->titulo,
                     'description' => $curso->descricao ?? 'Curso atualizado com conteudo pratico e trilha guiada.',
                     'category' => $curso->categoria ?? 'Tecnologia',
-                    'level' => 'Intermediario',
-                    'duration' => '24h',
+                    'level' => $curso->nivelLabel(),
+                    'duration' => $curso->duracaoLabel(),
+                    'cover_url' => $curso->capaUrl(),
                     'tags' => [$curso->categoria ?? 'TI', 'Certificado', 'Projeto final'],
                     'teacher' => $curso->professor?->name ?? 'Equipe LMS',
                     'status' => $curso->status ?? 'ativo',
@@ -498,6 +476,7 @@ class CursoController extends Controller
                     'enroll_url' => '#',
                     'access_url' => route('aluno.cursos.show', $curso),
                     'is_enrolled' => $isEnrolled,
+                    'is_preview' => $previewAsStudent,
                     'progress' => $progress,
                 ];
             })->all();
@@ -671,16 +650,22 @@ class CursoController extends Controller
     {
         $validated = $this->validateCourse($request);
 
-        // Map minimal fields supported by the current cursos table.
         $curso = Curso::create([
             'titulo' => $validated['titulo'],
             'descricao' => $validated['descricao'],
             'categoria' => $validated['categoria'] ?? null,
+            'duracao_horas_min' => $validated['duracao_horas_min'] ?? null,
+            'duracao_horas_max' => $validated['duracao_horas_max'] ?? null,
+            'nivel_trilha' => $validated['nivel_trilha'] ?? null,
             'professor_id' => auth()->id(),
             'status' => $validated['status'] ?? 'ativo',
         ]);
 
-        // Enroll selected students for the new course.
+        if ($request->hasFile('capa')) {
+            $curso->capa_path = $request->file('capa')->store('cursos/capas', 'public');
+            $curso->save();
+        }
+
         if (!empty($validated['alunos'])) {
             $now = now()->toDateString();
             foreach ($validated['alunos'] as $studentId) {
@@ -704,12 +689,24 @@ class CursoController extends Controller
     {
         $validated = $this->validateCourse($request, true);
 
-        $curso->update([
+        $payload = [
             'titulo' => $validated['titulo'],
             'descricao' => $validated['descricao'],
             'categoria' => $validated['categoria'] ?? null,
+            'duracao_horas_min' => $validated['duracao_horas_min'] ?? null,
+            'duracao_horas_max' => $validated['duracao_horas_max'] ?? null,
+            'nivel_trilha' => $validated['nivel_trilha'] ?? null,
             'status' => $validated['status'] ?? $curso->status,
-        ]);
+        ];
+
+        if ($request->hasFile('capa')) {
+            if ($curso->capa_path) {
+                Storage::disk('public')->delete($curso->capa_path);
+            }
+            $payload['capa_path'] = $request->file('capa')->store('cursos/capas', 'public');
+        }
+
+        $curso->update($payload);
 
         return redirect()
             ->route("{$role}.cursos.show", $curso)
@@ -723,6 +720,10 @@ class CursoController extends Controller
             'descricao' => 'required|string|max:2000',
             'categoria' => 'nullable|string|max:60',
             'status' => 'nullable|string|in:rascunho,ativo,oculto,agendado',
+            'duracao_horas_min' => 'nullable|integer|min:1|max:500',
+            'duracao_horas_max' => 'nullable|integer|min:1|max:500|gte:duracao_horas_min',
+            'nivel_trilha' => 'nullable|string|in:basico,intermediario,avancado,trilha_completa',
+            'capa' => 'nullable|image|max:4096',
             'alunos' => $isUpdate ? 'nullable' : 'nullable|array',
             'alunos.*' => $isUpdate ? 'nullable' : 'integer|exists:users,id',
         ]);
@@ -787,18 +788,12 @@ class CursoController extends Controller
 
         $quickLinks = $role === 'admin'
             ? [
-                ['label' => 'Pagina inicial', 'href' => url('/')],
                 ['label' => 'Painel', 'href' => route('admin.dashboard')],
-                ['label' => 'Meus cursos', 'href' => route('admin.cursos')],
-                ['label' => 'Administracao do site', 'href' => route('admin.configuracoes')],
-                ['label' => 'Voltar', 'href' => route('admin.cursos')],
+                ['label' => 'Cursos', 'href' => route('admin.cursos')],
             ]
             : [
-                ['label' => 'Pagina inicial', 'href' => url('/')],
                 ['label' => 'Painel', 'href' => route('professor.dashboard')],
-                ['label' => 'Meus cursos', 'href' => route('professor.cursos')],
-                ['label' => 'Administracao do site', 'href' => route('professor.dashboard')],
-                ['label' => 'Voltar', 'href' => route('professor.cursos')],
+                ['label' => 'Cursos', 'href' => route('professor.cursos')],
             ];
 
         $participants = Enrollment::query()
@@ -880,10 +875,10 @@ class CursoController extends Controller
                 ->pluck('progresso', 'conteudo_id')
             : collect();
 
-        return $aulas->map(function (Aula $aula) use ($progressMap) {
+        return $this->coalesceModulesByNumber($aulas->map(function (Aula $aula) use ($progressMap) {
             $items = $aula->conteudos->map(function (Conteudo $conteudo) use ($progressMap) {
                 $progress = (int) ($progressMap[$conteudo->id] ?? 0);
-                $fileUrl = $conteudo->arquivo ? asset('storage/' . $conteudo->arquivo) : null;
+                $fileUrl = $conteudo->arquivo ? '/storage/' . ltrim($conteudo->arquivo, '/') : null;
 
                 return [
                     'id' => $conteudo->id,
@@ -910,7 +905,83 @@ class CursoController extends Controller
                 'progress' => $moduleProgress,
                 'items' => $items->all(),
             ];
-        })->all();
+        })->all());
+    }
+
+    /**
+     * Agrupa aulas com o mesmo número de módulo (ex.: duas "05 · Arena…")
+     * num único card visual, com seções internas.
+     *
+     * @param  array<int, array<string, mixed>>  $modules
+     * @return array<int, array<string, mixed>>
+     */
+    private function coalesceModulesByNumber(array $modules): array
+    {
+        $buckets = [];
+        foreach ($modules as $mod) {
+            $title = (string) ($mod['title'] ?? '');
+            if (preg_match('/^(\d+)\s*·/u', $title, $m)) {
+                $key = str_pad($m[1], 2, '0', STR_PAD_LEFT);
+            } else {
+                $key = 'solo-'.$mod['id'];
+            }
+            $buckets[$key][] = $mod;
+        }
+
+        $out = [];
+        foreach ($buckets as $key => $group) {
+            if (count($group) === 1) {
+                $out[] = $group[0];
+                continue;
+            }
+
+            $sections = [];
+            $allItems = [];
+            $sum = 0;
+            $n = 0;
+            $parentId = 'g-'.$key;
+
+            foreach ($group as $g) {
+                $label = (string) $g['title'];
+                $short = preg_replace('/^\d+\s*·\s*\[[^\]]+\]\s*/u', '', $label);
+                if (! is_string($short) || trim($short) === '') {
+                    $short = $label;
+                }
+                $sectionItems = [];
+                foreach ($g['items'] as $it) {
+                    $it['module_id'] = $parentId;
+                    $sectionItems[] = $it;
+                    $allItems[] = $it;
+                    $sum += (int) ($it['progress'] ?? 0);
+                    $n++;
+                }
+                $sections[] = [
+                    'label' => trim($short),
+                    'aula_id' => $g['id'],
+                    'items' => $sectionItems,
+                ];
+            }
+
+            if ($key === '05') {
+                $parentTitle = '05 · [Basico] Arenas 1 e 2 · Arrays na pratica';
+            } else {
+                $prefix = preg_match('/^(\d+\s*·\s*\[[^\]]+\])/u', (string) $group[0]['title'], $mm)
+                    ? $mm[1]
+                    : (string) $group[0]['title'];
+                $parentTitle = $prefix.' · '.implode(' + ', array_column($sections, 'label'));
+            }
+
+            $out[] = [
+                'id' => $parentId,
+                'title' => $parentTitle,
+                'description' => $group[0]['description'] ?? '',
+                'progress' => $n > 0 ? (int) round($sum / $n) : 0,
+                'items' => $allItems,
+                'sections' => $sections,
+            ];
+        }
+
+        return $out;
     }
 
     private function storeAula(Request $request, Curso $curso, string $role)
@@ -1058,7 +1129,7 @@ class CursoController extends Controller
             'aula_titulo' => $isUpdate ? 'nullable|string|max:120' : 'required_without:aula_id|string|max:120',
             'titulo' => 'required|string|max:150',
             'descricao' => 'nullable|string|max:2000',
-            'tipo' => 'required|string|in:video,pdf,link,texto,arquivo,word,excel,quiz,prova,tarefa',
+            'tipo' => 'required|string|in:video,pdf,link,texto,arquivo,word,excel,quiz,prova,tarefa,desafio',
             'url' => 'nullable|url|max:500',
             'ordem' => 'nullable|integer|min:0',
             'arquivo' => 'nullable|file|max:51200',
@@ -1092,19 +1163,16 @@ class CursoController extends Controller
 
     private function previewCurso(Curso $curso)
     {
-        $aula = Aula::where('curso_id', $curso->id)->orderBy('ordem')->orderBy('id')->first();
+        $editor = ViewAs::realRole() === 'admin'
+            ? route('admin.cursos.show', $curso)
+            : route('professor.cursos.show', $curso);
 
-        if (!$aula) {
-            return view('pages.aluno_conteudos.index', [
-                'aula' => null,
-            ]);
-        }
-
-        $aula->load('conteudos');
-
-        return view('pages.aluno_conteudos.index', [
-            'aula' => $aula,
+        session([
+            ViewAs::SESSION_KEY => 'aluno',
+            'view_as_return' => $editor,
         ]);
+
+        return redirect()->route('aluno.cursos.show', $curso);
     }
 
     private function handleCourseAction(Request $request, Curso $curso, string $acao, string $role)

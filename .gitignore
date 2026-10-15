@@ -3,6 +3,8 @@
 .env
 .env.backup
 .env.production
+.canary-credentials.md
+canary-credentials.local.md
 .phpactor.json
 .phpunit.result.cache
 /.fleet
@@ -22,3 +24,11 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Pacote gerado para upload
+/DEPLOY/
+
+# Cópias locais pesadas (não sobem no Git)
+/backups/
+/PDFS/
+/docs/

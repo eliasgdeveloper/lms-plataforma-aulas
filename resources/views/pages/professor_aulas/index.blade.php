@@ -7,7 +7,7 @@
 
 <div class="page-header">
     <h1>Criar Aula</h1>
-    <p>Crie e gerenie suas aulas aqui</p>
+    <p>Crie e gerencie suas aulas aqui</p>
 </div>
 
 <div class="aulas-container">

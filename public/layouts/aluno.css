@@ -1,15 +1,17 @@
 /* Aluno Layout Styles */
 
 :root {
-    --primary: #2563eb;
-    --secondary: #1e40af;
-    --text-dark: #1b1b18;
-    --text-light: #706f6c;
-    --bg-light: #fdfdfc;
+    --primary: #0f766e;
+    --primary-soft: rgba(15, 118, 110, 0.18);
+    --secondary: #12344d;
+    --text-dark: #0f172a;
+    --text-light: #5b6b7c;
+    --bg-light: #eef3f8;
     --bg-white: #ffffff;
-    --border: #e3e3e0;
-    --sidebar-bg: #003d82;
+    --border: #d7e0ea;
+    --sidebar-bg: #12344d;
     --sidebar-text: #ffffff;
+    --font-ui: "Poppins", "Segoe UI", sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -25,7 +27,7 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body { background-color: var(--bg-light); color: var(--text-dark); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Figtree', sans-serif; }
+body { background-color: var(--bg-light); color: var(--text-dark); font-family: var(--font-ui); }
 
 .aluno-wrapper {
     display: flex;
@@ -47,6 +49,20 @@ body { background-color: var(--bg-light); color: var(--text-dark); font-family: 
     margin-bottom: 2rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     padding-bottom: 1rem;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.sidebar-brand img {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    flex: 0 0 auto;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
 .sidebar-header h2 {
@@ -85,9 +101,10 @@ body { background-color: var(--bg-light); color: var(--text-dark); font-family: 
 }
 
 .nav-link.active {
-    background-color: var(--primary);
+    background-color: var(--primary-soft);
     opacity: 1;
     font-weight: 600;
+    box-shadow: inset 3px 0 0 var(--primary);
 }
 
 .nav-link .icon {
@@ -126,6 +143,13 @@ body { background-color: var(--bg-light); color: var(--text-dark); font-family: 
     justify-content: center;
     font-weight: 700;
     flex-shrink: 0;
+}
+
+.avatar--badge {
+    object-fit: cover;
+    background: transparent;
+    padding: 0;
+    border: 2px solid #e8c872;
 }
 
 .user-info {

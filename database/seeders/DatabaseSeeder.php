@@ -23,5 +23,8 @@ class DatabaseSeeder extends Seeder
 
         // Chama o seeder da aula
         $this->call(AulaSeeder::class);
+
+        // Trilha PHP reutilizável (curso id 3 / blueprint)
+        $this->call(PhpMissionCourseSeeder::class);
     }
 }

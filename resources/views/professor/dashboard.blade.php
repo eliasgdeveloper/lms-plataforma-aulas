@@ -15,7 +15,7 @@
         <a href="{{ route('professor.aulas') }}">
             <span class="icon">✏️</span>
             <h3>Criar Aula</h3>
-            <p>Crie e gerenie suas aulas</p>
+            <p>Crie e gerencie suas aulas</p>
         </a>
     </div>
     <div class="nav-card">

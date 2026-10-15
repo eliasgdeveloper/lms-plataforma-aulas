@@ -20,7 +20,7 @@
 }
 
 .dashboard-hero {
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
 
 .dashboard-hero h1 {
@@ -35,10 +35,60 @@
     color: var(--text-light);
 }
 
+.chama-codar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1rem 1.25rem;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--bg-white);
+}
+
+.chama-codar__flame {
+    width: 42px;
+    height: 56px;
+    border-radius: 50% 50% 45% 45%;
+    background: linear-gradient(180deg, #fbbf24 0%, #f97316 45%, #dc2626 100%);
+    box-shadow: 0 0 18px rgba(249, 115, 22, 0.45);
+    animation: chama-flicker 1.4s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+.chama-codar.is-dim .chama-codar__flame {
+    background: linear-gradient(180deg, #94a3b8, #64748b);
+    box-shadow: none;
+    animation: none;
+    opacity: 0.55;
+}
+
+.chama-codar__body h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.15rem;
+    color: var(--text-dark);
+}
+
+.chama-codar__body p {
+    margin: 0;
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.chama-codar__streak {
+    margin-top: 0.25rem !important;
+    font-size: 0.85rem !important;
+}
+
+@keyframes chama-flicker {
+    0%, 100% { transform: scaleY(1) translateY(0); }
+    50% { transform: scaleY(1.08) translateY(-2px); }
+}
+
 .dashboard-nav {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
 }
 
 .nav-card {

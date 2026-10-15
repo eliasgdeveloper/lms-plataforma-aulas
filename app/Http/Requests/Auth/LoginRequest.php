@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +28,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string'],
         ];
     }
@@ -41,7 +42,12 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $account = $this->accountByLogin(trim((string) $this->input('email')));
+
+        if (! $account || ! Auth::attempt([
+            'email' => $account->email,
+            'password' => (string) $this->input('password'),
+        ], $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -81,5 +87,37 @@ class LoginRequest extends FormRequest
     public function throttleKey(): string
     {
         return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+    }
+
+    /**
+     * Aceita e-mail ou usuário. O campo continua se chamando email
+     * para não quebrar o formulário já publicado.
+     */
+    private function accountByLogin(string $login): ?User
+    {
+        $login = trim($login);
+        if ($login === '') {
+            return null;
+        }
+
+        if (str_contains($login, '@')) {
+            return User::query()->whereRaw('lower(email) = ?', [Str::lower($login)])->first();
+        }
+
+        $aliases = [
+            'elias' => 'elias@codar.local',
+            'admin' => 'admin@example.com',
+            'professor' => 'professor@example.com',
+            'aluno' => 'aluno@example.com',
+            'leandro' => 'leandro@codar.local',
+            'usertesteai' => 'usertesteai@codar.local',
+        ];
+
+        $key = Str::lower($login);
+        if (isset($aliases[$key])) {
+            return User::query()->whereRaw('lower(email) = ?', [$aliases[$key]])->first();
+        }
+
+        return User::query()->whereRaw('lower(name) = ?', [$key])->first();
     }
 }

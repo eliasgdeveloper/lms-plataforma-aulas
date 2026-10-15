@@ -1,0 +1,12 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Capas/PDFs ficam em public/storage (Hostinger não usa symlink)
+    RewriteRule ^storage/(.*)$ public/storage/$1 [L]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+DirectoryIndex public/index.php index.php

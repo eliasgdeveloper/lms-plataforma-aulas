@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\ViewAs;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -14,9 +15,21 @@ class RoleMiddleware
         // como 'role' e usado assim: ->middleware('role:professor')
         $user = $request->user();
 
-        if (! $user || $user->role !== $role) {
-            // Retorna 403 quando o usuário não possui o papel correto.
+        if (! $user) {
             abort(403, 'Acesso negado');
+        }
+
+        $effective = ViewAs::effectiveRole();
+        if ($effective !== $role) {
+            // Usuário logado no papel errado: redireciona com aviso amigável
+            // em vez de só mostrar 403 seco (páginas customizadas cobrem o restante).
+            if ($request->expectsJson()) {
+                abort(403, 'Acesso negado');
+            }
+
+            return redirect()
+                ->to(ViewAs::homeFor($effective))
+                ->with('status', 'Essa área é para outro perfil. Te trouxemos de volta para a sua área.');
         }
 
         return $next($request);

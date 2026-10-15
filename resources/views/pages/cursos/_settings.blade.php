@@ -60,16 +60,21 @@
     data-default-panel="{{ $defaultPanel }}"
     data-first-module-panel="{{ $firstModulePanelId }}"
 >
-    <header class="course-settings__topbar">
-        <div class="course-settings__links">
-            @foreach ($quickLinks as $link)
-                <a href="{{ $link['href'] }}">{{ $link['label'] }}</a>
-            @endforeach
+    <header class="course-player-bar">
+        <div class="course-player-bar__group">
+            <a class="course-player-bar__link" href="{{ $homeUrl }}">Início</a>
+            <a class="course-player-bar__link" href="{{ $backUrl }}">Cursos</a>
+            <button class="course-player-bar__link" type="button" onclick="history.back()">Voltar</button>
+            <button class="course-player-bar__link" type="button" onclick="history.forward()">Avançar</button>
         </div>
-        <div class="course-settings__actions">
-            <a class="btn btn-ghost" href="{{ $conteudosPreviewRoute }}" target="_blank" rel="noopener noreferrer">Preview</a>
-            <a class="btn btn-ghost" href="{{ $backUrl }}">Voltar</a>
-            <a class="btn btn-secondary" href="{{ $homeUrl }}">Home</a>
+        <p class="course-player-bar__title">{{ $courseName }}</p>
+        <div class="course-player-bar__group">
+            <a class="course-player-bar__link" href="{{ $conteudosPreviewRoute }}">Ver como aluno</a>
+            <a class="course-player-bar__link" href="{{ route('view-as.edit') }}">Mudar papel</a>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button class="course-player-bar__link course-player-bar__link--quiet" type="submit">Sair</button>
+            </form>
         </div>
     </header>
 
@@ -377,7 +382,7 @@
 
                         <div class="course-settings__actions">
                             <button class="btn btn-primary" type="submit">Salvar</button>
-                            <a class="btn btn-ghost" href="{{ $conteudosPreviewRoute }}" target="_blank" rel="noopener noreferrer">Ver</a>
+                            <a class="btn btn-ghost" href="{{ $conteudosPreviewRoute }}">Ver</a>
                             <button class="btn btn-ghost" type="button" data-tab="curso" data-tab-role="sidebar">Cancelar</button>
                         </div>
                     </form>
@@ -813,7 +818,6 @@
                     </div>
                 @endif
                 </div>
-            </div>
 
             <div class="course-panel" data-panel="notas" hidden>
                 <div class="course-settings__card">
@@ -909,7 +913,7 @@
 
                                 <div class="course-settings__actions">
                                     <button class="btn btn-primary" type="submit">Salvar</button>
-                                    <a class="btn btn-ghost" href="{{ $conteudosPreviewRoute }}" target="_blank" rel="noopener noreferrer">Ver</a>
+                                    <a class="btn btn-ghost" href="{{ $conteudosPreviewRoute }}">Ver</a>
                                     <button class="btn btn-ghost" type="button" data-tab="curso" data-tab-role="sidebar">Cancelar</button>
                                 </div>
                             </form>
@@ -944,6 +948,7 @@
                                             <option value="excel">Excel</option>
                                             <option value="quiz">Quiz</option>
                                             <option value="prova">Prova</option>
+                                            <option value="desafio">Desafio/Prova</option>
                                             <option value="tarefa">Tarefa</option>
                                         </select>
                                     </label>
@@ -998,7 +1003,7 @@
 
                                 <div class="course-settings__actions">
                                     <button class="btn btn-primary" type="submit">Salvar</button>
-                                    <a class="btn btn-ghost" href="{{ $conteudosPreviewRoute }}" target="_blank" rel="noopener noreferrer">Ver</a>
+                                    <a class="btn btn-ghost" href="{{ $conteudosPreviewRoute }}">Ver</a>
                                     <button class="btn btn-ghost" type="button" data-tab="{{ $modulePanelId }}" data-tab-role="sidebar">Cancelar</button>
                                 </div>
                             </form>
@@ -1097,11 +1102,11 @@
                                         @switch($itemType)
                                             @case('video')
                                                 @if ($arquivoUrl)
-                                                    <video controls preload="metadata" controlsList="nodownload noplaybackrate" disablePictureInPicture oncontextmenu="return false" src="{{ $arquivoUrl }}"></video>
+                                                    <video controls preload="none" controlsList="nodownload noplaybackrate" disablePictureInPicture oncontextmenu="return false" data-src="{{ $arquivoUrl }}"></video>
                                                 @elseif (!empty($item['url']))
                                                     <div class="course-item-preview__embed">
                                                         <iframe
-                                                            src="{{ $item['url'] }}"
+                                                            data-src="{{ $item['url'] }}"
                                                             title="Preview do video"
                                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                                             allowfullscreen
@@ -1114,7 +1119,7 @@
                                             @case('pdf')
                                                 @if ($arquivoUrl)
                                                     <div class="course-item-preview__embed">
-                                                        <iframe src="{{ $arquivoUrl }}" title="Preview do PDF"></iframe>
+                                                        <iframe data-src="{{ $arquivoUrl }}" title="Preview do PDF"></iframe>
                                                     </div>
                                                     <div class="course-item-preview__file">
                                                         <span>PDF anexado:</span>
@@ -1125,7 +1130,7 @@
                                                     </div>
                                                 @elseif (!empty($item['url']))
                                                     <div class="course-item-preview__embed">
-                                                        <iframe src="{{ $item['url'] }}" title="Preview do PDF"></iframe>
+                                                        <iframe data-src="{{ $item['url'] }}" title="Preview do PDF"></iframe>
                                                     </div>
                                                     <div class="course-item-preview__file">
                                                         <span>PDF externo:</span>
@@ -1212,6 +1217,7 @@
                                                 <option value="excel" {{ $itemType === 'excel' ? 'selected' : '' }}>Excel</option>
                                                 <option value="quiz" {{ $itemType === 'quiz' ? 'selected' : '' }}>Quiz</option>
                                                 <option value="prova" {{ $itemType === 'prova' ? 'selected' : '' }}>Prova</option>
+                                                <option value="desafio" {{ $itemType === 'desafio' ? 'selected' : '' }}>Desafio/Prova</option>
                                                 <option value="tarefa" {{ $itemType === 'tarefa' ? 'selected' : '' }}>Tarefa</option>
                                             </select>
                                         </label>
@@ -1270,7 +1276,7 @@
 
                                     <div class="course-settings__actions">
                                         <button class="btn btn-primary" type="submit">Salvar</button>
-                                        <a class="btn btn-ghost" href="{{ $conteudosPreviewRoute }}" target="_blank" rel="noopener noreferrer">Ver</a>
+                                        <a class="btn btn-ghost" href="{{ $conteudosPreviewRoute }}">Ver</a>
                                         <button class="btn btn-ghost" type="button" data-tab="{{ $modulePanelId }}" data-tab-role="sidebar">Cancelar</button>
                                     </div>
                                 </form>
@@ -1298,9 +1304,21 @@
             const firstModulePanel = root.dataset.firstModulePanel || 'module-new';
             const primaryTargets = new Set(Array.from(primaryTabs).map((tab) => tab.dataset.tab));
 
+            const mountMedia = (panel) => {
+                panel.querySelectorAll('[data-src]').forEach((node) => {
+                    if (!node.getAttribute('src')) {
+                        node.setAttribute('src', node.dataset.src);
+                    }
+                });
+            };
+
             const activate = (target) => {
                 panels.forEach((panel) => {
-                    panel.hidden = panel.dataset.panel !== target;
+                    const show = panel.dataset.panel === target;
+                    panel.hidden = !show;
+                    if (show) {
+                        mountMedia(panel);
+                    }
                 });
 
                 const primaryActive = primaryTargets.has(target) ? target : 'curso';

@@ -191,8 +191,10 @@ body { background-color: var(--bg-light); color: var(--text-dark); font-family: 
 }
 
 .admin-wrapper--course-focus .admin-main {
-    padding: 2rem;
+    padding: 0;
     width: 100%;
+    height: 100vh;
+    overflow: hidden;
 }
 
 @media (max-width: 768px) {

@@ -23,6 +23,8 @@
 </script>
 @endpush
 
+@section('professor-shell', 'course-focus')
+
 @section('professor-content')
 @push('styles')
 <link rel="stylesheet" href="{{ asset('pages/cursos/style.css') }}">

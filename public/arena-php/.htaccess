@@ -1,0 +1,35 @@
+DirectoryIndex index.php index.html
+
+Options -Indexes
+
+<IfModule mod_headers.c>
+    Header set X-Robots-Tag "noindex, nofollow, noarchive"
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Se o site NÃO estiver na raiz do domínio (ex: /pasta/), descomente:
+    # RewriteBase /pasta/
+
+    RewriteRule ^auth/gate\.php$ - [L]
+    RewriteRule ^auth/sso_consume\.php$ - [L]
+    RewriteRule ^index\.php$ - [L]
+    RewriteRule ^login\.html$ index.php [L]
+    RewriteRule ^auth/login\.php$ - [L]
+    RewriteRule ^auth/logout\.php$ - [L]
+    RewriteRule ^bemvindo\.php$ - [L]
+    RewriteRule ^desafio\.php$ - [L]
+    RewriteRule ^desafio_sprint2\.php$ - [L]
+    RewriteRule ^desafio/check\.php$ - [L]
+    RewriteRule ^desafio/check_sprint2\.php$ - [L]
+    RewriteRule ^desafio/progresso\.php$ - [L]
+    RewriteRule ^desafio/progresso_sprint2\.php$ - [L]
+
+    RewriteCond %{REQUEST_URI} \.(css|js|png|jpg|jpeg|webp|gif|svg|ico|woff2|woff|ttf|eot|map)$ [NC]
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^(.*)$ auth/gate.php?file=$1 [L,QSA]
+</IfModule>

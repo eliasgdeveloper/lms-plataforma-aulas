@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Página')</title>
+    @include('partials.site-icons')
     @stack('meta')
     
     <!-- Alpine.js - Interatividade reativa -->
@@ -132,15 +133,28 @@
     </style>
     @stack('styles')
 </head>
-<body>
+@php
+    $courseFocus = trim($__env->yieldContent('professor-shell')) === 'course-focus'
+        || trim($__env->yieldContent('admin-shell')) === 'course-focus';
+    $appHome = '/';
+    if (auth()->check()) {
+        $appHome = \App\Support\ViewAs::homeFor(\App\Support\ViewAs::effectiveRole());
+    }
+@endphp
+<body class="{{ $courseFocus ? 'is-course-player' : '' }}">
+    @include('partials.view-as-banner')
+    @unless ($courseFocus)
     <!-- Navbar -->
     <nav class="navbar">
-        <a href="/" class="navbar-brand">LMS</a>
+        <a href="{{ $appHome }}" class="navbar-brand">LMS</a>
         
         <div class="navbar-actions">
             @auth
                 <div class="user-menu">
                     <span class="navbar-link">{{ auth()->user()->name }}</span>
+                    @if (\App\Support\ViewAs::canSwitch())
+                        <a href="{{ route('view-as.edit') }}" class="navbar-link">Mudar papel</a>
+                    @endif
                           <a href="{{ route('profile.edit') }}" class="navbar-link">Perfil</a>
                     <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                         @csrf
@@ -152,6 +166,7 @@
             @endauth
         </div>
     </nav>
+    @endunless
 
     <!-- Main content com ID para HTMX -->
     <main id="main-content">

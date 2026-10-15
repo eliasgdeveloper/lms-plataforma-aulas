@@ -3,7 +3,7 @@
 @section('title', 'Curso - ' . $curso->titulo)
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('pages/aluno_curso_conteudo/style.css') }}">
+<link rel="stylesheet" href="{{ asset('pages/aluno_curso_conteudo/style.css') }}?v=20261004d">
 @endpush
 
 @section('content')
@@ -21,6 +21,15 @@
                     <span id="overall-completed-count">{{ $completedCount }}</span>/<span id="overall-total-count">{{ $totalCount }}</span> itens
                 </div>
             </div>
+            <div class="course-docs" style="margin-top:0.75rem;display:flex;flex-direction:column;gap:0.35rem;">
+                @if ($curso->matrizUrl())
+                    <a href="{{ $curso->matrizUrl() }}" target="_blank" rel="noopener">Matriz do curso (PDF)</a>
+                @endif
+                @if ($curso->checklistUrl())
+                    <a href="{{ $curso->checklistUrl() }}" target="_blank" rel="noopener">Checklist detalhado (PDF)</a>
+                @endif
+                <small>{{ $curso->duracaoLabel() }} · {{ $curso->nivelLabel() }}</small>
+            </div>
         </div>
 
         <div class="course-modules">
@@ -31,24 +40,50 @@
                         <span class="module__progress" data-module-progress="{{ $module['id'] }}">{{ $module['progress'] }}%</span>
                     </button>
                     <ul class="module__items">
-                        @foreach ($module['items'] as $item)
-                            <li>
-                                <button class="item" type="button"
-                                    data-content-id="{{ $item['id'] }}"
-                                    data-module-id="{{ $module['id'] }}"
-                                    data-title="{{ $item['title'] }}"
-                                    data-description="{{ $item['description'] ?? '' }}"
-                                    data-type="{{ $item['type'] }}"
-                                    data-url="{{ $item['url'] ?? '' }}"
-                                    data-file-url="{{ $item['file_url'] ?? '' }}"
-                                    data-progress="{{ $item['progress'] }}"
-                                    data-allow-download="{{ !empty($item['allow_download_student']) ? 1 : 0 }}">
-                                    <span class="item__icon">{{ strtoupper(substr($item['type'] ?? 'C', 0, 1)) }}</span>
-                                    <span class="item__label">{{ $item['title'] }}</span>
-                                    <span class="item__status">{{ $item['progress'] }}%</span>
-                                </button>
-                            </li>
-                        @endforeach
+                        @if (!empty($module['sections']))
+                            @foreach ($module['sections'] as $sectionIndex => $section)
+                                <li class="module__section-group {{ $sectionIndex > 0 ? 'module__section-group--nested' : '' }}">
+                                    <div class="module__section {{ $sectionIndex > 0 ? 'module__section--next' : '' }}">
+                                        @if ($sectionIndex > 0)
+                                            <span class="module__section-branch" aria-hidden="true"></span>
+                                        @endif
+                                        <span class="module__section-mark"></span>
+                                        <span class="module__section-label">{{ $section['label'] }}</span>
+                                    </div>
+                                    <ul class="module__section-items">
+                                        @foreach ($section['items'] as $item)
+                                            <li>
+                                                <button class="item item--nested" type="button"
+                                                    data-content-id="{{ $item['id'] }}"
+                                                    data-module-id="{{ $module['id'] }}"
+                                                    data-title="{{ $item['title'] }}"
+                                                    data-type="{{ $item['type'] }}"
+                                                    data-progress="{{ $item['progress'] }}">
+                                                    <span class="item__icon">{{ strtoupper(substr($item['type'] ?? 'C', 0, 1)) }}</span>
+                                                    <span class="item__label">{{ $item['title'] }}</span>
+                                                    <span class="item__status">{{ $item['progress'] }}%</span>
+                                                </button>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </li>
+                            @endforeach
+                        @else
+                            @foreach ($module['items'] as $item)
+                                <li>
+                                    <button class="item" type="button"
+                                        data-content-id="{{ $item['id'] }}"
+                                        data-module-id="{{ $module['id'] }}"
+                                        data-title="{{ $item['title'] }}"
+                                        data-type="{{ $item['type'] }}"
+                                        data-progress="{{ $item['progress'] }}">
+                                        <span class="item__icon">{{ strtoupper(substr($item['type'] ?? 'C', 0, 1)) }}</span>
+                                        <span class="item__label">{{ $item['title'] }}</span>
+                                        <span class="item__status">{{ $item['progress'] }}%</span>
+                                    </button>
+                                </li>
+                            @endforeach
+                        @endif
                     </ul>
                 </div>
             @empty
@@ -74,7 +109,7 @@
                     <span class="metric__value" id="overall-progress-metric">{{ $overallProgress }}%</span>
                 </div>
                 <div class="metric">
-                    <span class="metric__label">Pontos</span>
+                    <span class="metric__label">XP</span>
                     <span class="metric__value" id="overall-points">{{ $points }}</span>
                 </div>
             </div>
@@ -90,5 +125,24 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('pages/aluno_curso_conteudo/script.js') }}" defer></script>
+@php
+    $courseContentsPayload = [];
+    foreach ($modules as $module) {
+        foreach ($module['items'] as $item) {
+            $courseContentsPayload[(string) $item['id']] = [
+                'id' => $item['id'],
+                'title' => $item['title'] ?? '',
+                'description' => $item['description'] ?? '',
+                'type' => $item['type'] ?? '',
+                'url' => $item['url'] ?? '',
+                'file_url' => $item['file_url'] ?? '',
+                'allow_download_student' => !empty($item['allow_download_student']),
+            ];
+        }
+    }
+@endphp
+<script>
+    window.__COURSE_CONTENTS__ = @json($courseContentsPayload);
+</script>
+<script src="{{ asset('pages/aluno_curso_conteudo/script.js') }}?v=20261004d" defer></script>
 @endpush
