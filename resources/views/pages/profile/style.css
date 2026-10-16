@@ -1,0 +1,115 @@
+.profile-container {
+    --profile-accent: #003d82;
+    --profile-text: #1b1b18;
+    --profile-muted: #4b5563;
+    --profile-surface: #ffffff;
+    --profile-input: #ffffff;
+    --profile-border: #d1d5db;
+    --profile-button: #003d82;
+    --profile-button-hover: #002d62;
+
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    color: var(--profile-text);
+}
+
+.profile-container h1 {
+    color: var(--profile-accent);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+.profile-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.profile-section {
+    background: var(--profile-surface);
+    border: 1px solid var(--profile-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.profile-container .profile-section h2,
+.profile-container .profile-section h3 {
+    color: var(--profile-accent);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.profile-section p,
+.profile-container .text-gray-600,
+.profile-container .text-gray-700 {
+    color: var(--profile-muted);
+}
+
+.profile-container .text-gray-900 {
+    color: var(--profile-text);
+}
+
+.profile-container input:not([type="checkbox"]) {
+    background-color: var(--profile-input);
+    border-color: var(--profile-border);
+    color: var(--profile-text);
+}
+
+.profile-container input:not([type="checkbox"])::placeholder {
+    color: var(--profile-muted);
+    opacity: 1;
+}
+
+.profile-container input:not([type="checkbox"]):focus {
+    border-color: var(--profile-accent);
+    --tw-ring-color: var(--profile-accent);
+}
+
+.profile-container .bg-white {
+    background-color: var(--profile-surface);
+}
+
+.profile-container button.bg-gray-800 {
+    background-color: var(--profile-button);
+    color: #ffffff;
+}
+
+.profile-container button.bg-gray-800:hover,
+.profile-container button.bg-gray-800:focus {
+    background-color: var(--profile-button-hover);
+}
+
+.profile-container button.bg-white {
+    border-color: var(--profile-border);
+    color: var(--profile-text);
+}
+
+@media (prefers-color-scheme: dark) {
+    .profile-container {
+        --profile-accent: #93c5fd;
+        --profile-text: #f3f4f6;
+        --profile-muted: #cbd5e1;
+        --profile-surface: #111827;
+        --profile-input: #1f2937;
+        --profile-border: #4b5563;
+        --profile-button: #2563eb;
+        --profile-button-hover: #1d4ed8;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 1rem;
+    }
+
+    .profile-container h1 {
+        font-size: 1.5rem;
+    }
+
+    .profile-section {
+        padding: 1rem;
+    }
+}

@@ -1,0 +1,118 @@
+<?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+
+class MakePageCommand extends Command
+{
+    protected $signature = 'make:page {name : The page name (folder will be created under resources/views and public/pages)}';
+
+    protected $description = 'Scaffold a simple page in resources/views/<name>/ and public/pages/<name>/';
+
+    public function handle()
+    {
+        $name = trim($this->argument('name'));
+        if ($name === '') {
+            $this->error('Please provide a valid page name.');
+
+            return 1;
+        }
+
+        $viewDir = base_path('resources/views/'.$name);
+        $publicDir = public_path('pages/'.$name);
+
+        if (is_dir($viewDir) || is_dir($publicDir)) {
+            $this->error("A page named '{$name}' already exists.");
+
+            return 1;
+        }
+
+        if (! mkdir($viewDir, 0755, true) || ! mkdir($publicDir, 0755, true)) {
+            $this->error('Failed to create directories.');
+
+            return 1;
+        }
+
+        $viewPath = $viewDir.'/index.blade.php';
+        $cssPath = $publicDir.'/style.css';
+        $jsPath = $publicDir.'/script.js';
+
+        $viewContent = <<<BLADE
+@extends('layouts.page')
+
+@section('title', '{$name}')
+
+@push('styles')
+<link rel="stylesheet" href="{{ asset('pages/{$name}/style.css') }}">
+@endpush
+
+@section('content')
+<div class="page-container">
+    <h1>{$name}</h1>
+    <p>Conteudo inicial da pagina {$name}.</p>
+</div>
+@endsection
+
+@push('scripts')
+<script src="{{ asset('pages/{$name}/script.js') }}" defer></script>
+@endpush
+BLADE;
+
+        $cssContent = <<<CSS
+/* Styles for page {$name} */
+
+:root {
+    --primary-color: #2563eb;
+    --text-dark: #1b1b18;
+    --text-light: #706f6c;
+    --bg-light: #fdfdfc;
+    --border-color: #e3e3e0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Figtree", sans-serif;
+}
+
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-container h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.page-container p {
+    font-size: 1rem;
+    color: var(--text-light);
+}
+CSS;
+
+        $jsContent = <<<JS
+// Script for page {$name}
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('Page {$name} loaded');
+});
+JS;
+
+        file_put_contents($viewPath, $viewContent);
+        file_put_contents($cssPath, $cssContent);
+        file_put_contents($jsPath, $jsContent);
+
+        $this->info("Created view: resources/views/{$name}/index.blade.php");
+        $this->info("Created asset: public/pages/{$name}/style.css");
+        $this->info("Created asset: public/pages/{$name}/script.js");
+        $this->info("Page '{$name}' created successfully!");
+
+        return 0;
+    }
+}
